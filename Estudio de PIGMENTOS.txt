@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIGMENTOS | Personalización DTF, Sublimación & Creatividad Textil</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='96' fill='%23FDE293'/%3E%3Cpath d='M78,86 L74,56 L92,70 Q100,68 108,70 L126,56 L122,86 C132,96 130,115 118,120 L124,158 L112,158 L110,148 L90,148 L88,158 L76,158 L82,120 C70,115 68,96 78,86 Z' fill='%23FDE293' stroke='%236366B8' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='91' cy='96' r='3.5' fill='%236366B8'/%3E%3Ccircle cx='109' cy='96' r='3.5' fill='%236366B8'/%3E%3Cpolygon points='100,114 95,134 100,142 105,134' fill='%236366B8'/%3E%3C/svg%3E">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Montserrat, Inter & Fredoka (para curvas suaves del logo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#09090B',
+                            dark: '#18181B',
+                            accent: '#6366B8', // Violeta-Azul Pigmentos
+                            pastel: '#FDE293', // Amarillo Pastel Pigmentos
+                            lime: '#84CC16',
+                            surface: '#F4F4F5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos personalizados para el lienzo interactivo y scrollbars */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAFA;
+            color: #09090B;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Patrón de cuadrícula técnica sutil para el estudio de diseño */
+        .studio-grid {
+            background-color: #F4F4F5;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Área de impresión interactiva */
+        .print-zone {
+            border: 2px dashed rgba(99, 102, 184, 0.55);
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .print-zone.clean-preview {
+            border-color: transparent !important;
+        }
+        .print-zone:hover:not(.clean-preview) {
+            border-color: rgba(99, 102, 184, 0.95);
+            background-color: rgba(99, 102, 184, 0.04);
+        }
+
+        /* Cursor de arrastre para el artwork */
+        .draggable-art {
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+        }
+        .draggable-art:active {
+            cursor: grabbing;
+        }
+
+        /* Transición suave entre pestañas */
+        .view-section {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #E4E4E7;
+            height: 6px;
+            border-radius: 999px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            background-color: #09090B;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#6366B8] selection:text-white flex flex-col min-h-screen">
+
+    <!-- =====================================================================
+         1. BARRA DE NAVEGACIÓN SUPERIOR FIJA (STICKY NAVBAR)
+    ====================================================================== -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                
+                <!-- Logo Oficial Circular PIGMENTOS -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="switchView('studio')">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full shrink-0 shadow-md ring-2 ring-[#6366B8]/25 group-hover:scale-105 group-hover:ring-[#6366B8] transition-all overflow-hidden bg-[#FDE293]">
+                        <svg viewBox="0 0 300 300" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo PIGMENTOS">
+                            <defs>
+                                <path id="navPigmentosArc" d="M 46,136 A 106,106 0 0,1 254,136" />
+                            </defs>
+                            <!-- Fondo circular amarillo pastel -->
+                            <circle cx="150" cy="150" r="148" fill="#FDE293" />
+                            <!-- Texto arqueado superior PIGMENTOS -->
+                            <text fill="#6366B8" font-family="'Fredoka', 'Montserrat', sans-serif" font-weight="700" font-size="37" letter-spacing="1.5">
+                                <textPath href="#navPigmentosArc" startOffset="50%" text-anchor="middle">PIGMENTOS</textPath>
+                            </text>
+                            <!-- Ilustración gato de pie con corbata -->
+                            <g stroke="#6366B8" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- Cola -->
+                                <path d="M178,214 C202,212 214,192 216,174 C217,168 209,167 207,173 C205,187 195,201 178,204" fill="#FDE293" stroke-width="4.2"/>
+                                <!-- Cuerpo y cabeza del gato -->
+                                <path d="M122,112 L117,68 L139,86 Q150,83 161,86 L183,68 L178,112 C187,120 185,134 176,140 C184,158 186,184 182,214 C181,226 179,238 175,243 C170,246 164,244 163,239 L161,233 L139,233 L137,239 C136,244 130,246 125,243 C121,238 119,226 118,214 C114,184 116,158 124,140 C115,134 113,120 122,112 Z" fill="#FDE293" stroke-width="4.2"/>
+                                <!-- Brazos -->
+                                <path d="M124,146 C117,164 117,184 123,192 C126,195 130,192 129,187" fill="none" stroke-width="3.6"/>
+                                <path d="M176,146 C183,164 183,184 177,192 C174,195 170,192 171,187" fill="none" stroke-width="3.6"/>
+                                <!-- Ojos y nariz -->
+                                <circle cx="137" cy="112" r="3" fill="#6366B8" stroke="none"/>
+                                <circle cx="163" cy="112" r="3" fill="#6366B8" stroke="none"/>
+                                <polygon points="147,118 153,118 150,122" fill="#6366B8" stroke="none"/>
+                                <!-- Bigotes -->
+                                <line x1="108" y1="112" x2="118" y2="114" stroke-width="3"/>
+                                <line x1="107" y1="119" x2="118" y2="119" stroke-width="3"/>
+                                <line x1="192" y1="112" x2="182" y2="114" stroke-width="3"/>
+                                <line x1="193" y1="119" x2="182" y2="119" stroke-width="3"/>
+                                <!-- Collar y Corbata -->
+                                <path d="M124,137 Q150,147 176,137" fill="none" stroke-width="4"/>
+                                <rect x="145" y="140" width="10" height="7" rx="2" fill="#6366B8" stroke="none"/>
+                                <polygon points="146,147 154,147 157,183 150,192 143,183" fill="#6366B8" stroke="none"/>
+                            </g>
+                            <!-- Lema inferior -->
+                            <g fill="#6366B8" font-family="'Fredoka', 'Montserrat', sans-serif" font-weight="700" font-size="9.5" text-anchor="middle" letter-spacing="0.8">
+                                <text x="150" y="259">LA VIDA ES DEMASIADA</text>
+                                <text x="150" y="270">CORTA PARA NO SER</text>
+                                <text x="150" y="281">CREATIVOS</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-display font-black text-lg md:text-xl tracking-tight text-zinc-950 block leading-none">
+                            PIGMENTOS<span class="text-[#6366B8]">.STUDIO</span>
+                        </span>
+                        <span class="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 hidden sm:block">
+                            DTF • Sublimación • Creatividad
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Navegación Desktop (Pestañas Independientes) -->
+                <nav class="hidden md:flex items-center bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200/80" aria-label="Secciones principales">
+                    <button id="nav-studio" onclick="switchView('studio')" class="nav-tab px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 bg-zinc-950 text-white shadow-sm">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>Personalización DTF & Sublimación</span>
+                    </button>
+                    <button id="nav-apparel" onclick="switchView('apparel')" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-2">
+                        <i data-lucide="shirt" class="w-4 h-4"></i>
+                        <span>Catálogo de Ropa</span>
+                    </button>
+                    <button id="nav-accessories" onclick="switchView('accessories')" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Accesorios</span>
+                    </button>
+                    <button id="nav-comments" onclick="switchView('comments')" class="nav-tab px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-2">
+                        <i data-lucide="message-square-heart" class="w-4 h-4"></i>
+                        <span>Comentarios Públicos</span>
+                    </button>
+                </nav>
+
+                <!-- Acciones Derecha: Carrito -->
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleCart(true)" class="relative inline-flex items-center gap-2.5 bg-zinc-950 hover:bg-[#6366B8] text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-95">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Carrito</span>
+                        <span id="cart-badge" class="bg-[#6366B8] text-white text-xs font-extrabold px-2 py-0.5 rounded-full min-w-[22px] text-center transition-colors">
+                            0
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navegación Móvil (Tabs Horizontales Compactas) -->
+            <div class="flex md:hidden items-center gap-1.5 pb-3 overflow-x-auto no-scrollbar">
+                <button id="mob-nav-studio" onclick="switchView('studio')" class="mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-bold bg-zinc-950 text-white text-center shadow-sm">
+                    DTF & Sublimación
+                </button>
+                <button id="mob-nav-apparel" onclick="switchView('apparel')" class="mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 text-center">
+                    Ropa
+                </button>
+                <button id="mob-nav-accessories" onclick="switchView('accessories')" class="mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 text-center">
+                    Accesorios
+                </button>
+                <button id="mob-nav-comments" onclick="switchView('comments')" class="mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 text-center">
+                    Comentarios
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notificación Toast Flotante -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- =====================================================================
+         CONTENEDOR PRINCIPAL DE VISTAS INDEPENDIENTES
+    ====================================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+        <!-- =================================================================
+             VISTA 1: PERSONALIZACIÓN DTF & SUBLIMACIÓN (CONFIGURADOR ESTRELLA)
+        ================================================================== -->
+        <section id="view-studio" class="view-section">
+            <!-- Encabezado de Estudio -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FDE293]/50 border border-[#6366B8]/30 text-[#6366B8] text-xs font-bold uppercase tracking-wider mb-2">
+                        <span class="w-2 h-2 rounded-full bg-[#6366B8] animate-pulse"></span>
+                        Estudio Interactivo PIGMENTOS
+                    </div>
+                    <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-zinc-950">
+                        Diseña tu Prenda Personalizada
+                    </h1>
+                    <p class="text-zinc-500 text-sm sm:text-base mt-1">
+                        La vida es demasiada corta para no ser creativos. Sube tu arte, ajusta frente o espalda y cotiza al instante.
+                    </p>
+                </div>
+
+                <!-- Controles rápidos de vista previa -->
+                <div class="flex items-center gap-2 self-start md:self-auto">
+                    <button id="btn-clean-preview" onclick="toggleCleanPreview()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700 transition-all shadow-sm">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        <span id="clean-preview-label">Ocultar Guías</span>
+                    </button>
+                    <button onclick="resetCurrentSide()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border border-zinc-300 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-zinc-700 transition-all shadow-sm" title="Limpiar diseño del lado actual">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Reiniciar Lado</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid Principal del Configurador (Izquierda: Mockup | Derecha: Panel de Control) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- COLUMNA IZQUIERDA: LIENZO / MOCKUP INTERACTIVO (7 columnas en lg) -->
+                <div class="lg:col-span-7 bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
+                    
+                    <!-- Barra Superior del Lienzo: Selector Frente / Espalda -->
+                    <div class="px-4 sm:px-6 py-3.5 bg-zinc-50 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3">
+                        <div class="inline-flex bg-zinc-200/80 p-1 rounded-xl">
+                            <button id="side-btn-front" onclick="switchGarmentSide('front')" class="px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-zinc-950 shadow-sm transition-all flex items-center gap-1.5">
+                                <span>Vista Frontal</span>
+                                <span id="badge-front-active" class="hidden w-2 h-2 rounded-full bg-[#6366B8]"></span>
+                            </button>
+                            <button id="side-btn-back" onclick="switchGarmentSide('back')" class="px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-1.5">
+                                <span>Vista Trasera</span>
+                                <span id="badge-back-active" class="hidden w-2 h-2 rounded-full bg-[#6366B8]"></span>
+                            </button>
+                        </div>
+
+                        <div class="text-xs font-medium text-zinc-500 flex items-center gap-1.5">
+                            <i data-lucide="move" class="w-3.5 h-3.5 text-zinc-400"></i>
+                            <span>Arrastra tu imagen dentro del recuadro</span>
+                        </div>
+                    </div>
+
+                    <!-- Área Central del Mockup (Lienzo con cuadrícula) -->
+                    <div id="mockup-dropzone" class="relative studio-grid w-full aspect-[4/4.3] sm:aspect-[4/3.8] flex items-center justify-center p-4 sm:p-8 select-none overflow-hidden">
+                        
+                        <!-- Etiqueta flotante de estado de prenda -->
+                        <div class="absolute top-4 left-4 z-10 flex flex-col gap-1.5 pointer-events-none">
+                            <span id="canvas-tech-pill" class="px-2.5 py-1 rounded-lg bg-zinc-950/85 backdrop-blur text-white text-[11px] font-bold tracking-wide uppercase shadow">
+                                DTF FULL COLOR
+                            </span>
+                            <span id="canvas-color-pill" class="px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur border border-zinc-200 text-zinc-800 text-[11px] font-semibold shadow-sm">
+                                Color: Blanco Óptico
+                            </span>
+                        </div>
+
+                        <!-- SVG REALISTA DE CAMISETA CON SOMBRAS Y PLIEGUES -->
+                        <div class="relative w-full max-w-[430px] h-full flex items-center justify-center">
+                            <svg id="tshirt-svg" viewBox="0 0 500 540" class="w-full h-full drop-shadow-xl transition-all duration-300" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <!-- Filtro de sombreado suave para realismo textil -->
+                                    <filter id="fabricShadow" x="-10%" y="-10%" width="120%" height="120%">
+                                        <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.14"/>
+                                    </filter>
+                                    <!-- Gradiente sutil de volumen corporal -->
+                                    <linearGradient id="bodyVolume" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#000000" stop-opacity="0.14"/>
+                                        <stop offset="18%" stop-color="#000000" stop-opacity="0.02"/>
+                                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08"/>
+                                        <stop offset="82%" stop-color="#000000" stop-opacity="0.02"/>
+                                        <stop offset="100%" stop-color="#000000" stop-opacity="0.16"/>
+                                    </linearGradient>
+                                    <!-- Sombra interior del cuello -->
+                                    <linearGradient id="neckShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+                                        <stop offset="100%" stop-color="#000000" stop-opacity="0.05"/>
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Silueta Base de la Camiseta -->
+                                <g filter="url(#fabricShadow)">
+                                    <!-- Cuerpo principal y mangas -->
+                                    <path id="tshirt-base-color" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1.2"
+                                        d="M178,42 
+                                           C205,62 295,62 322,42 
+                                           L372,58 
+                                           L468,142 
+                                           L418,205 
+                                           L374,168 
+                                           L374,492 
+                                           C374,502 366,508 356,508 
+                                           L144,508 
+                                           C134,508 126,502 126,492 
+                                           L126,168 
+                                           L82,205 
+                                           L32,142 
+                                           L128,58 
+                                           Z" />
+                                    
+                                    <!-- Capa de volumen e iluminación textil -->
+                                    <path fill="url(#bodyVolume)" pointer-events="none"
+                                        d="M178,42 C205,62 295,62 322,42 L372,58 L468,142 L418,205 L374,168 L374,492 C374,502 366,508 356,508 L144,508 C134,508 126,502 126,492 L126,168 L82,205 L32,142 L128,58 Z" />
+
+                                    <!-- Cuello Vista Frontal -->
+                                    <g id="tshirt-collar-front">
+                                        <!-- Interior trasero del cuello -->
+                                        <path d="M178,42 C205,64 295,64 322,42 C302,82 198,82 178,42 Z" fill="url(#neckShadow)"/>
+                                        <!-- Ribete acanalado del cuello frontal -->
+                                        <path id="collar-rib-front" d="M174,44 C202,94 298,94 326,44 L318,40 C292,84 208,84 182,40 Z" fill="#F4F4F5" stroke="#000000" stroke-opacity="0.15" stroke-width="1"/>
+                                        <!-- Etiqueta interior estampada -->
+                                        <rect x="236" y="62" width="28" height="9" rx="2" fill="#000000" fill-opacity="0.12"/>
+                                    </g>
+
+                                    <!-- Cuello Vista Trasera (oculto inicialmente) -->
+                                    <g id="tshirt-collar-back" class="hidden">
+                                        <path id="collar-rib-back" d="M176,43 C210,64 290,64 324,43 L318,38 C288,56 212,56 182,38 Z" fill="#F4F4F5" stroke="#000000" stroke-opacity="0.15" stroke-width="1"/>
+                                    </g>
+
+                                    <!-- Costuras de hombros, mangas y dobladillo inferior -->
+                                    <path d="M128,58 L178,42 M322,42 L372,58" stroke="#000000" stroke-opacity="0.14" stroke-width="1.2" stroke-dasharray="3,2" fill="none"/>
+                                    <path d="M126,168 C132,140 134,105 128,58" stroke="#000000" stroke-opacity="0.12" stroke-width="1.2" fill="none"/>
+                                    <path d="M374,168 C368,140 366,105 372,58" stroke="#000000" stroke-opacity="0.12" stroke-width="1.2" fill="none"/>
+                                    <path d="M126,492 L374,492" stroke="#000000" stroke-opacity="0.15" stroke-width="1.2" stroke-dasharray="3,2" fill="none"/>
+                                    <path d="M40,149 L89,198 M460,149 L411,198" stroke="#000000" stroke-opacity="0.15" stroke-width="1.2" stroke-dasharray="3,2" fill="none"/>
+
+                                    <!-- Pliegues naturales sutiles -->
+                                    <path d="M142,185 Q155,230 138,275" stroke="#000000" stroke-opacity="0.06" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                    <path d="M358,185 Q345,230 362,275" stroke="#000000" stroke-opacity="0.06" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                </g>
+                            </svg>
+
+                            <!-- ZONA DE IMPRESIÓN DELIMITADA (OVERLAY INTERACTIVO) -->
+                            <div id="print-area-box" class="print-zone absolute w-[44%] h-[50%] top-[23%] left-[28%] rounded-lg flex items-center justify-center overflow-hidden">
+                                
+                                <!-- Placeholder cuando no hay imagen subida en el lado actual -->
+                                <div id="upload-placeholder" onclick="document.getElementById('art-upload-input').click()" class="text-center p-3 cursor-pointer group flex flex-col items-center justify-center w-full h-full">
+                                    <div class="w-10 h-10 rounded-full bg-[#6366B8]/15 text-[#6366B8] flex items-center justify-center mb-1.5 group-hover:scale-110 group-hover:bg-[#6366B8] group-hover:text-white transition-all">
+                                        <i data-lucide="image-plus" class="w-5 h-5"></i>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-zinc-700 group-hover:text-[#6366B8] leading-tight">
+                                        Haz clic o arrastra tu diseño aquí
+                                    </span>
+                                    <span class="text-[9px] text-zinc-400 mt-0.5">
+                                        PNG, JPG, SVG
+                                    </span>
+                                </div>
+
+                                <!-- Imagen Subida Manipulable -->
+                                <img id="uploaded-art-img" src="" alt="Diseño personalizado" class="hidden draggable-art max-w-none origin-center" style="transform: translate(0px, 0px) scale(1) rotate(0deg);" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra Inferior del Lienzo: Controles de Transformación de Imagen -->
+                    <div id="art-controls-bar" class="px-4 sm:px-6 py-4 bg-white border-t border-zinc-200 transition-all">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            
+                            <!-- Botón Principal de Subida -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <input type="file" id="art-upload-input" accept="image/png, image/jpeg, image/svg+xml, image/webp" class="hidden" onchange="handleImageUpload(event)">
+                                <button onclick="document.getElementById('art-upload-input').click()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 bg-[#6366B8] hover:bg-[#5255A3] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                                    <span id="upload-btn-text">Subir Imagen (PNG/SVG)</span>
+                                </button>
+                                
+                                <button id="btn-remove-art" onclick="removeCurrentArt()" class="hidden p-2.5 rounded-xl border border-zinc-200 text-zinc-500 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-all" title="Eliminar imagen de este lado">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+
+                            <!-- Sliders de Escala y Rotación (Activos al subir imagen) -->
+                            <div id="transform-sliders" class="flex items-center gap-4 w-full sm:w-auto opacity-40 pointer-events-none transition-opacity">
+                                <div class="flex-1 sm:w-32">
+                                    <div class="flex justify-between text-[11px] font-bold text-zinc-600 mb-1">
+                                        <span>Tamaño</span>
+                                        <span id="scale-value-label">100%</span>
+                                    </div>
+                                    <input type="range" id="art-scale-slider" min="25" max="220" value="100" oninput="updateArtTransform()">
+                                </div>
+
+                                <div class="flex-1 sm:w-28">
+                                    <div class="flex justify-between text-[11px] font-bold text-zinc-600 mb-1">
+                                        <span>Rotar</span>
+                                        <span id="rotate-value-label">0°</span>
+                                    </div>
+                                    <input type="range" id="art-rotate-slider" min="-180" max="180" value="0" oninput="updateArtTransform()">
+                                </div>
+
+                                <button onclick="centerArtPosition()" class="p-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold" title="Centrar imagen">
+                                    <i data-lucide="align-center-vertical" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: PANEL DE CONFIGURACIÓN Y PRECIO (5 columnas en lg) -->
+                <div class="lg:col-span-5 bg-white rounded-3xl border border-zinc-200 shadow-sm p-5 sm:p-7 flex flex-col gap-6">
+                    
+                    <!-- Paso 1: Técnica de Estampado -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2.5">
+                            <label class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">
+                                1. Técnica de Estampado
+                            </label>
+                            <span class="text-xs font-semibold text-zinc-500">Alta durabilidad</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="tech-btn-dtf" onclick="selectTechnique('DTF')" class="tech-option p-3.5 rounded-2xl border-2 border-zinc-950 bg-zinc-950 text-white text-left transition-all shadow-sm">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-display font-extrabold text-sm">Estampado DTF</span>
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#FDE293] tech-check"></i>
+                                </div>
+                                <p class="text-[11px] text-zinc-300 leading-snug">
+                                    Colores vibrantes en cualquier tela y color (algodón o poliéster).
+                                </p>
+                            </button>
+
+                            <button id="tech-btn-sublimation" onclick="selectTechnique('Sublimación')" class="tech-option p-3.5 rounded-2xl border-2 border-zinc-200 bg-white hover:border-zinc-300 text-zinc-900 text-left transition-all">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-display font-extrabold text-sm">Sublimación</span>
+                                    <i data-lucide="circle" class="w-4 h-4 text-zinc-300 tech-check"></i>
+                                </div>
+                                <p class="text-[11px] text-zinc-500 leading-snug">
+                                    Tinta integrada en la fibra sin tacto. Ideal para tonos claros.
+                                </p>
+                            </button>
+                        </div>
+
+                        <!-- Alerta / Etiqueta Informativa Dinámica para Sublimación -->
+                        <div id="sublimation-notice" class="hidden mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+                            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <span class="font-bold block">Nota técnica de Sublimación:</span>
+                                La sublimación requiere prendas con alto contenido de poliéster y <strong>solo es viable sobre tonos claros</strong> (Blanco, Gris Jaspe o Arena) para garantizar fidelidad de color.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Color de Prenda -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2.5">
+                            <label class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">
+                                2. Color de la Prenda
+                            </label>
+                            <span id="selected-color-name" class="text-xs font-bold text-zinc-900">Blanco Óptico</span>
+                        </div>
+
+                        <div id="color-swatches-container" class="flex flex-wrap items-center gap-3">
+                            <!-- Generado dinámicamente por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Selector de Talla -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2.5">
+                            <label class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">
+                                3. Talla (Corte Urbano Regular)
+                            </label>
+                            <span class="text-[11px] text-zinc-500">XXL / XXXL +$3.00</span>
+                        </div>
+
+                        <div id="size-buttons-container" class="grid grid-cols-7 gap-1.5 sm:gap-2">
+                            <!-- Generado dinámicamente por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Resumen de Precios y Cantidad -->
+                    <div class="bg-zinc-50 rounded-2xl p-4 border border-zinc-200/90 space-y-3">
+                        <div class="flex items-center justify-between text-xs text-zinc-600">
+                            <span>Prenda base + Técnica (<span id="summary-tech-label">DTF</span>)</span>
+                            <span id="summary-base-price" class="font-semibold text-zinc-900">$18.00</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-zinc-600">
+                            <span>Estampados activos (<span id="summary-sides-label">Frente</span>)</span>
+                            <span id="summary-prints-price" class="font-semibold text-zinc-900">$0.00</span>
+                        </div>
+                        <div id="summary-size-row" class="hidden flex items-center justify-between text-xs text-zinc-600">
+                            <span>Suplemento talla especial (<span id="summary-size-tag">XXL</span>)</span>
+                            <span class="font-semibold text-zinc-900">+$3.00</span>
+                        </div>
+                        
+                        <div class="pt-2.5 border-t border-zinc-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase text-zinc-400 block">Total Estimado</span>
+                                <span id="studio-total-price" class="font-display text-2xl sm:text-3xl font-black text-zinc-950">$18.00</span>
+                            </div>
+
+                            <!-- Selector de Cantidad -->
+                            <div class="flex items-center bg-white border border-zinc-300 rounded-xl p-1 shadow-sm">
+                                <button onclick="changeStudioQty(-1)" class="w-8 h-8 rounded-lg hover:bg-zinc-100 flex items-center justify-center font-bold text-zinc-700 transition-colors" aria-label="Disminuir cantidad">
+                                    -
+                                </button>
+                                <span id="studio-qty-display" class="w-9 text-center font-bold text-sm text-zinc-950">1</span>
+                                <button onclick="changeStudioQty(1)" class="w-8 h-8 rounded-lg hover:bg-zinc-100 flex items-center justify-center font-bold text-zinc-700 transition-colors" aria-label="Aumentar cantidad">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción Final -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <button onclick="addCustomGarmentToCart()" class="w-full inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white px-5 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-md active:scale-[0.98]">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            <span>Agregar al Carrito</span>
+                        </button>
+
+                        <button onclick="quoteCustomViaWhatsApp()" class="w-full inline-flex items-center justify-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white px-5 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-md active:scale-[0.98]">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Cotizar / Pedir por WhatsApp</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             VISTA 2: CATÁLOGO DE ROPA (INDEPENDIENTE DE DTF)
+        ================================================================== -->
+        <section id="view-apparel" class="view-section hidden">
+            <!-- Banner Editorial de Colección -->
+            <div class="bg-zinc-950 text-white rounded-3xl p-6 sm:p-10 mb-8 relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-rose-600 text-white text-xs font-extrabold uppercase tracking-wider mb-3">
+                        Colección Essential & Street
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-black tracking-tight mb-2">
+                        Indumentaria Heavyweight & Blanks
+                    </h2>
+                    <p class="text-zinc-300 text-sm sm:text-base">
+                        Prendas de alto gramaje (240g - 420g) listas para usar o llevar tu estilo urbano al siguiente nivel. Selecciona tu talla y agrega directo a tu pedido.
+                    </p>
+                </div>
+                <!-- Decoración geométrica de fondo -->
+                <div class="absolute -right-12 -bottom-16 w-64 h-64 rounded-full bg-rose-600/20 blur-2xl pointer-events-none"></div>
+                <div class="absolute right-12 top-6 text-zinc-800 font-display font-black text-7xl select-none hidden md:block">
+                    RAW//26
+                </div>
+            </div>
+
+            <!-- Barra de Filtros Rápidos por Categoría -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex flex-wrap items-center gap-2" id="apparel-filters">
+                    <button onclick="filterApparel('Todos')" data-cat="Todos" class="apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-zinc-950 text-white shadow-sm transition-all">
+                        Todos
+                    </button>
+                    <button onclick="filterApparel('Camisetas')" data-cat="Camisetas" class="apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 transition-all">
+                        Camisetas
+                    </button>
+                    <button onclick="filterApparel('Sudaderas')" data-cat="Sudaderas" class="apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 transition-all">
+                        Sudaderas / Hoodies
+                    </button>
+                    <button onclick="filterApparel('Gorras')" data-cat="Gorras" class="apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 transition-all">
+                        Gorras
+                    </button>
+                </div>
+
+                <span id="apparel-count-label" class="text-xs font-semibold text-zinc-500">
+                    Mostrando 6 productos
+                </span>
+            </div>
+
+            <!-- Cuadrícula E-commerce de Ropa -->
+            <div id="apparel-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Renderizado dinámicamente por JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             VISTA 3: CATÁLOGO DE ACCESORIOS (COMPLETAMENTE SEPARADA)
+        ================================================================== -->
+        <section id="view-accessories" class="view-section hidden">
+            <!-- Encabezado de Sección Accesorios -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 border-b border-zinc-200 pb-6">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-wider mb-2">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-rose-500"></i>
+                        Merch & Complementos
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-black tracking-tight text-zinc-950">
+                        Accesorios & Objetos de Marca
+                    </h2>
+                    <p class="text-zinc-500 text-sm sm:text-base mt-1 max-w-2xl">
+                        Desde tazas de cerámica y termos térmicos hasta tote bags de lona cruda y pines metálicos. Ideales para kits corporativos, regalos o merch oficial.
+                    </p>
+                </div>
+                <div class="text-xs font-bold text-zinc-500 bg-white px-4 py-2.5 rounded-xl border border-zinc-200 shadow-sm">
+                    Envíos nacionales • Descuentos por volumen
+                </div>
+            </div>
+
+            <!-- Cuadrícula de Accesorios -->
+            <div id="accessories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Renderizado dinámicamente por JS -->
+            </div>
+        </section>
+
+        <!-- =================================================================
+             VISTA 4: COMENTARIOS PÚBLICOS Y EXPERIENCIAS DE LA COMUNIDAD
+        ================================================================== -->
+        <section id="view-comments" class="view-section hidden">
+            <!-- Encabezado de Comunidad con el Gatito Boceto -->
+            <div class="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 mb-8 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5">
+                    <div class="w-24 h-24 rounded-3xl bg-[#FDE293]/45 border-2 border-[#6366B8]/25 flex items-center justify-center shrink-0 p-2">
+                        <svg viewBox="0 0 200 200" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gatito PIGMENTOS Comunidad">
+                            <defs>
+                                <filter id="crayonHeader" x="-10%" y="-10%" width="120%" height="120%">
+                                    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise"/>
+                                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+                                </filter>
+                            </defs>
+                            <g filter="url(#crayonHeader)" stroke="#342E68" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- Cabeza plana con orejitas cortas a los lados y cuerpo gordito -->
+                                <path d="M54,48 Q100,42 146,48 L138,63 C149,73 151,90 138,101 C147,108 148,116 141,119 C149,135 147,156 131,164 L126,176 L118,165 Q100,168 82,165 L74,176 L69,164 C53,156 51,135 59,119 C52,116 53,108 62,101 C49,90 51,73 62,63 Z" fill="#FFFFFF" stroke-width="4.2"/>
+                                <!-- Ojitos puntuales -->
+                                <circle cx="81" cy="72" r="3.4" fill="#342E68" stroke="none"/>
+                                <circle cx="119" cy="72" r="3.4" fill="#342E68" stroke="none"/>
+                                <!-- Boquita en forma de w -->
+                                <path d="M90,84 Q95,92 100,84 Q105,92 110,84" stroke-width="3.8"/>
+                                <!-- Bigotes izquierdo y derecho -->
+                                <line x1="41" y1="76" x2="55" y2="78" stroke-width="3.4"/>
+                                <line x1="41" y1="84" x2="55" y2="84" stroke-width="3.4"/>
+                                <line x1="145" y1="78" x2="159" y2="76" stroke-width="3.4"/>
+                                <line x1="145" y1="84" x2="159" y2="84" stroke-width="3.4"/>
+                                <!-- Collar y corbata larga -->
+                                <path d="M63,102 Q100,111 137,102" stroke-width="3.8"/>
+                                <rect x="94" y="106" width="12" height="8" rx="2" fill="#FFFFFF" stroke-width="3.6"/>
+                                <polygon points="95,114 105,114 109,147 100,157 91,147" fill="#FFFFFF" stroke-width="3.8"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FDE293] text-[#342E68] text-xs font-extrabold uppercase tracking-wider mb-2">
+                            Muro Abierto • Tu Voz Importa
+                        </span>
+                        <h2 class="font-display text-2xl sm:text-3xl font-black tracking-tight text-zinc-950">
+                            Comentarios Públicos de Clientes
+                        </h2>
+                        <p class="text-zinc-500 text-sm mt-1 max-w-xl">
+                            Comparte tu experiencia con nuestros estampados DTF, sublimación, prendas o atención. Leemos cada sugerencia y queja para seguir mejorando.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Resumen de Calificación -->
+                <div class="bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-center shrink-0 min-w-[175px]">
+                    <span id="comments-avg-rating" class="font-display text-3xl font-black text-zinc-950 block">5.0</span>
+                    <div class="flex items-center justify-center gap-1 text-amber-400 my-1">
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                    </div>
+                    <span id="comments-total-badge" class="text-xs font-semibold text-zinc-500">3 opiniones verificadas</span>
+                </div>
+            </div>
+
+            <!-- Grid: Formulario de Nuevo Comentario (Izquierda) + Muro Público (Derecha) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Formulario Interactivo -->
+                <div class="lg:col-span-5 bg-white rounded-3xl border border-zinc-200 p-6 shadow-xs">
+                    <h3 class="font-display font-extrabold text-lg text-zinc-950 mb-1">
+                        Escribe tu experiencia o sugerencia
+                    </h3>
+                    <p class="text-xs text-zinc-500 mb-5">
+                        Tu mensaje se publicará al instante en el muro para toda la comunidad.
+                    </p>
+
+                    <form id="public-comment-form" onsubmit="submitPublicComment(event)" class="space-y-4">
+                        <!-- Nombre o Alias -->
+                        <div>
+                            <label for="comment-author" class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+                                Tu Nombre o Alias (Opcional)
+                            </label>
+                            <input 
+                                type="text" 
+                                id="comment-author" 
+                                maxlength="45"
+                                placeholder="Ej: Valentina R. (o déjalo vacío para Anónimo)" 
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:border-[#6366B8]"
+                            />
+                        </div>
+
+                        <!-- Tipo de Mensaje -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+                                Tipo de Comentario
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" id="comment-type-group">
+                                <button type="button" onclick="selectCommentType('Experiencia positiva', this)" data-selected="true" class="comment-type-pill px-3 py-2 rounded-xl text-xs font-bold border-2 border-[#6366B8] bg-[#6366B8] text-white transition-all text-center">
+                                    Experiencia
+                                </button>
+                                <button type="button" onclick="selectCommentType('Cosa que mejorar', this)" data-selected="false" class="comment-type-pill px-3 py-2 rounded-xl text-xs font-bold border-2 border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 transition-all text-center">
+                                    Mejora
+                                </button>
+                                <button type="button" onclick="selectCommentType('Queja / Reporte', this)" data-selected="false" class="comment-type-pill px-3 py-2 rounded-xl text-xs font-bold border-2 border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 transition-all text-center">
+                                    Queja
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Calificación Interactiva -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+                                Calificación General
+                            </label>
+                            <div class="flex items-center gap-1.5" id="star-rating-selector">
+                                <button type="button" onclick="setCommentRating(1)" class="star-btn p-1 text-amber-400 hover:scale-110 transition-transform" aria-label="1 estrella">
+                                    <i data-lucide="star" class="w-6 h-6 fill-amber-400"></i>
+                                </button>
+                                <button type="button" onclick="setCommentRating(2)" class="star-btn p-1 text-amber-400 hover:scale-110 transition-transform" aria-label="2 estrellas">
+                                    <i data-lucide="star" class="w-6 h-6 fill-amber-400"></i>
+                                </button>
+                                <button type="button" onclick="setCommentRating(3)" class="star-btn p-1 text-amber-400 hover:scale-110 transition-transform" aria-label="3 estrellas">
+                                    <i data-lucide="star" class="w-6 h-6 fill-amber-400"></i>
+                                </button>
+                                <button type="button" onclick="setCommentRating(4)" class="star-btn p-1 text-amber-400 hover:scale-110 transition-transform" aria-label="4 estrellas">
+                                    <i data-lucide="star" class="w-6 h-6 fill-amber-400"></i>
+                                </button>
+                                <button type="button" onclick="setCommentRating(5)" class="star-btn p-1 text-amber-400 hover:scale-110 transition-transform" aria-label="5 estrellas">
+                                    <i data-lucide="star" class="w-6 h-6 fill-amber-400"></i>
+                                </button>
+                                <span id="rating-text-label" class="ml-2 text-xs font-bold text-zinc-700">5 / 5 Excelente</span>
+                            </div>
+                        </div>
+
+                        <!-- Texto del Comentario -->
+                        <div>
+                            <label for="comment-body" class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+                                Tu Mensaje *
+                            </label>
+                            <textarea 
+                                id="comment-body" 
+                                rows="4" 
+                                required
+                                maxlength="500"
+                                placeholder="Cuéntanos cómo fue tu experiencia cotizando, comprando o qué aspectos te gustaría que mejoráramos..."
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:outline-none focus:border-[#6366B8] resize-none"
+                            ></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-[#6366B8] hover:bg-[#5255A3] text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-sm active:scale-[0.99]">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Publicar Comentario</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Muro Público de Comentarios -->
+                <div class="lg:col-span-7 space-y-4">
+                    <!-- Filtros Rápidos del Muro -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-zinc-200">
+                        <div class="flex flex-wrap items-center gap-1.5" id="comments-filter-bar">
+                            <button onclick="filterPublicComments('Todos')" data-filter="Todos" class="comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-zinc-950 text-white transition-all">
+                                Todos
+                            </button>
+                            <button onclick="filterPublicComments('Experiencia positiva')" data-filter="Experiencia positiva" class="comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all">
+                                Experiencias
+                            </button>
+                            <button onclick="filterPublicComments('Cosa que mejorar')" data-filter="Cosa que mejorar" class="comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all">
+                                Mejoras
+                            </button>
+                            <button onclick="filterPublicComments('Queja / Reporte')" data-filter="Queja / Reporte" class="comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all">
+                                Quejas
+                            </button>
+                        </div>
+                        <span id="comments-showing-count" class="text-xs font-semibold text-zinc-400 px-2">
+                            Mostrando 3 comentarios
+                        </span>
+                    </div>
+
+                    <!-- Contenedor de Tarjetas de Comentarios -->
+                    <div id="public-comments-list" class="space-y-3.5">
+                        <!-- Renderizado dinámicamente por JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =====================================================================
+         FOOTER MINIMALISTA Y PROFESIONAL CON LOGO OFICIAL PIGMENTOS
+    ====================================================================== -->
+    <footer class="bg-white border-t border-zinc-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3.5">
+                <!-- Emblema Circular PIGMENTOS -->
+                <div class="w-14 h-14 rounded-full shrink-0 shadow-sm ring-2 ring-[#6366B8]/25 overflow-hidden bg-[#FDE293]">
+                    <svg viewBox="0 0 300 300" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo PIGMENTOS Footer">
+                        <defs>
+                            <path id="footerPigmentosArc" d="M 46,136 A 106,106 0 0,1 254,136" />
+                        </defs>
+                        <circle cx="150" cy="150" r="148" fill="#FDE293" />
+                        <text fill="#6366B8" font-family="'Fredoka', 'Montserrat', sans-serif" font-weight="700" font-size="37" letter-spacing="1.5">
+                            <textPath href="#footerPigmentosArc" startOffset="50%" text-anchor="middle">PIGMENTOS</textPath>
+                        </text>
+                        <g stroke="#6366B8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M178,214 C202,212 214,192 216,174 C217,168 209,167 207,173 C205,187 195,201 178,204" fill="#FDE293" stroke-width="4.2"/>
+                            <path d="M122,112 L117,68 L139,86 Q150,83 161,86 L183,68 L178,112 C187,120 185,134 176,140 C184,158 186,184 182,214 C181,226 179,238 175,243 C170,246 164,244 163,239 L161,233 L139,233 L137,239 C136,244 130,246 125,243 C121,238 119,226 118,214 C114,184 116,158 124,140 C115,134 113,120 122,112 Z" fill="#FDE293" stroke-width="4.2"/>
+                            <path d="M124,146 C117,164 117,184 123,192 C126,195 130,192 129,187" fill="none" stroke-width="3.6"/>
+                            <path d="M176,146 C183,164 183,184 177,192 C174,195 170,192 171,187" fill="none" stroke-width="3.6"/>
+                            <circle cx="137" cy="112" r="3" fill="#6366B8" stroke="none"/>
+                            <circle cx="163" cy="112" r="3" fill="#6366B8" stroke="none"/>
+                            <polygon points="147,118 153,118 150,122" fill="#6366B8" stroke="none"/>
+                            <line x1="108" y1="112" x2="118" y2="114" stroke-width="3"/>
+                            <line x1="107" y1="119" x2="118" y2="119" stroke-width="3"/>
+                            <line x1="192" y1="112" x2="182" y2="114" stroke-width="3"/>
+                            <line x1="193" y1="119" x2="182" y2="119" stroke-width="3"/>
+                            <path d="M124,137 Q150,147 176,137" fill="none" stroke-width="4"/>
+                            <rect x="145" y="140" width="10" height="7" rx="2" fill="#6366B8" stroke="none"/>
+                            <polygon points="146,147 154,147 157,183 150,192 143,183" fill="#6366B8" stroke="none"/>
+                        </g>
+                        <g fill="#6366B8" font-family="'Fredoka', 'Montserrat', sans-serif" font-weight="700" font-size="9.5" text-anchor="middle" letter-spacing="0.8">
+                            <text x="150" y="259">LA VIDA ES DEMASIADA</text>
+                            <text x="150" y="270">CORTA PARA NO SER</text>
+                            <text x="150" y="281">CREATIVOS</text>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-display font-black text-base text-zinc-950 block">
+                        PIGMENTOS<span class="text-[#6366B8]">.STUDIO</span>
+                    </span>
+                    <span class="text-xs text-zinc-500 block">
+                        © 2026 PIGMENTOS — <em>"La vida es demasiada corta para no ser creativos"</em>
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-zinc-500">
+                <button onclick="switchView('studio')" class="hover:text-zinc-950 transition-colors">Configurador DTF</button>
+                <button onclick="switchView('apparel')" class="hover:text-zinc-950 transition-colors">Ropa</button>
+                <button onclick="switchView('accessories')" class="hover:text-zinc-950 transition-colors">Accesorios</button>
+                <button onclick="switchView('comments')" class="hover:text-[#6366B8] font-bold transition-colors">Comentarios Públicos</button>
+                <span class="text-zinc-300">|</span>
+                <button onclick="openWhatsappSettingsModal()" class="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                    <span>WhatsApp Tienda: <span id="footer-wa-display">+58 424-7564333</span></span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         CARRITO DE COMPRAS LATERAL (SLIDE-OVER DRAWER)
+    ====================================================================== -->
+    <div id="cart-drawer-overlay" onclick="toggleCart(false)" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-xs z-50 hidden transition-opacity"></div>
+    
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-out flex flex-col">
+        
+        <!-- Cabecera del Carrito -->
+        <div class="px-6 py-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-[#6366B8]"></i>
+                <h3 class="font-display font-extrabold text-lg text-zinc-950">Tu Pedido PIGMENTOS</h3>
+                <span id="drawer-count-pill" class="bg-[#FDE293] text-[#6366B8] text-xs font-extrabold px-2 py-0.5 rounded-full">0</span>
+            </div>
+            <button onclick="toggleCart(false)" class="p-2 rounded-xl hover:bg-zinc-200 text-zinc-500 hover:text-zinc-950 transition-colors" aria-label="Cerrar carrito">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Lista de Ítems del Carrito -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Estado vacío inicial -->
+            <div id="cart-empty-state" class="h-full flex flex-col items-center justify-center text-center py-12">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-100 text-zinc-400 flex items-center justify-center mb-4">
+                    <i data-lucide="shopping-cart" class="w-8 h-8"></i>
+                </div>
+                <p class="font-display font-bold text-zinc-900 text-base">Tu carrito está vacío</p>
+                <p class="text-xs text-zinc-500 mt-1 max-w-[230px]">
+                    Personaliza una camiseta en nuestro estudio DTF o explora nuestros catálogos.
+                </p>
+                <button onclick="toggleCart(false); switchView('studio')" class="mt-5 px-4 py-2.5 bg-zinc-950 text-white rounded-xl text-xs font-bold hover:bg-rose-600 transition-colors">
+                    Ir al Configurador DTF
+                </button>
+            </div>
+        </div>
+
+        <!-- Pie del Carrito: Totales y Botones de Checkout -->
+        <div id="cart-footer" class="hidden border-t border-zinc-200 p-5 sm:p-6 bg-zinc-50 space-y-4">
+            <!-- Datos opcionales del cliente para el pedido de WhatsApp -->
+            <div class="bg-white p-3.5 rounded-2xl border border-zinc-200 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <label for="customer-info-input" class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">
+                        Datos de Entrega (Opcional)
+                    </label>
+                    <button onclick="openWhatsappSettingsModal()" class="text-[10px] font-bold text-emerald-700 hover:underline flex items-center gap-1" title="Configurar número receptor de WhatsApp">
+                        <i data-lucide="phone" class="w-3 h-3"></i>
+                        <span id="drawer-wa-display">+58 424-7564333</span>
+                    </button>
+                </div>
+                <input 
+                    type="text" 
+                    id="customer-info-input" 
+                    placeholder="Ej: Carlos Pérez - Caracas / Nota de envío..." 
+                    class="w-full px-3 py-2 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:outline-none focus:border-zinc-950 text-zinc-900 placeholder:text-zinc-400"
+                />
+            </div>
+
+            <div class="space-y-1.5">
+                <div class="flex justify-between text-xs text-zinc-500">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal" class="font-semibold text-zinc-800">$0.00</span>
+                </div>
+                <div class="flex justify-between text-xs text-zinc-500">
+                    <span>Producción / Preparación</span>
+                    <span class="font-semibold text-emerald-600">Incluida</span>
+                </div>
+                <div class="flex justify-between items-baseline pt-2 border-t border-zinc-200">
+                    <span class="font-display font-extrabold text-sm text-zinc-950">Total General</span>
+                    <span id="cart-total" class="font-display font-black text-2xl text-zinc-950">$0.00</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2.5">
+                <button onclick="checkoutViaWhatsApp()" class="w-full inline-flex items-center justify-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white px-4 py-3.5 rounded-xl font-bold text-sm transition-all shadow-sm active:scale-[0.99]">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Enviar Pedido por WhatsApp</span>
+                </button>
+                <button onclick="completeOrderModal()" class="w-full inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-rose-600 text-white px-4 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-sm active:scale-[0.99]">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    <span>Finalizar Compra Directa</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- =====================================================================
+         MODAL DE CONFIRMACIÓN Y AGRADECIMIENTO POST-COTIZACIÓN / POST-COMPRA
+    ====================================================================== -->
+    <div id="order-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/75 backdrop-blur-xs">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-zinc-200 animate-[fadeIn_0.25s_ease-out] relative">
+            <button onclick="closeOrderModal()" class="absolute top-4 right-4 p-2 rounded-xl text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 transition-colors" aria-label="Cerrar ventana">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Ilustración SVG Fiel del Gatito Gordito con Corbata (Estilo Crayón #342E68) -->
+            <div class="w-36 h-36 mx-auto mb-3 flex items-center justify-center">
+                <svg viewBox="0 0 200 200" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gatito de agradecimiento PIGMENTOS">
+                    <defs>
+                        <filter id="crayonThankYou" x="-10%" y="-10%" width="120%" height="120%">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" result="noise"/>
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.75" xChannelSelector="R" yChannelSelector="G"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#crayonThankYou)" stroke="#342E68" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Cabeza plana, orejitas cortas a los lados, bracitos cortos, cuerpo gordito y patitas cortas -->
+                        <path d="M54,48 Q100,42 146,48 L138,63 C149,73 151,90 138,101 C147,108 148,116 141,119 C149,135 147,156 131,164 L126,176 L118,165 Q100,168 82,165 L74,176 L69,164 C53,156 51,135 59,119 C52,116 53,108 62,101 C49,90 51,73 62,63 Z" fill="#FFFFFF" stroke-width="4.4"/>
+                        <!-- Ojitos puntuales -->
+                        <circle cx="81" cy="72" r="3.6" fill="#342E68" stroke="none"/>
+                        <circle cx="119" cy="72" r="3.6" fill="#342E68" stroke="none"/>
+                        <!-- Boquita en forma de w -->
+                        <path d="M90,84 Q95,92 100,84 Q105,92 110,84" stroke-width="3.8"/>
+                        <!-- Bigotes a ambos lados -->
+                        <line x1="40" y1="76" x2="55" y2="78" stroke-width="3.5"/>
+                        <line x1="40" y1="84" x2="55" y2="84" stroke-width="3.5"/>
+                        <line x1="145" y1="78" x2="160" y2="76" stroke-width="3.5"/>
+                        <line x1="145" y1="84" x2="160" y2="84" stroke-width="3.5"/>
+                        <!-- Collar y Corbata larga colgando en el pecho -->
+                        <path d="M63,102 Q100,111 137,102" stroke-width="3.8"/>
+                        <rect x="94" y="106" width="12" height="8" rx="2" fill="#FFFFFF" stroke-width="3.6"/>
+                        <polygon points="95,114 105,114 109,147 100,157 91,147" fill="#FFFFFF" stroke-width="3.8"/>
+                    </g>
+                </svg>
+            </div>
+
+            <span id="order-modal-badge" class="inline-block px-3 py-1 rounded-full bg-[#FDE293] text-[#342E68] text-[11px] font-extrabold uppercase tracking-wider">
+                Solicitud Enviada • <strong id="order-code-display">#PIG-8492</strong>
+            </span>
+
+            <h3 class="font-display font-black text-xl sm:text-2xl text-zinc-950 mt-2.5">
+                ¡Muchas gracias!
+            </h3>
+
+            <!-- Mensaje exacto solicitado por el usuario -->
+            <p class="text-sm sm:text-base text-zinc-700 font-medium leading-relaxed mt-2.5 bg-zinc-50 p-4 rounded-2xl border border-zinc-200/90">
+                "Gracias por su paciencia y por su compra. Si eres tan amable puedes escribir tu experiencia, quejas o cosas que mejorar, las leeremos."
+            </p>
+
+            <!-- Botones de acción: Ir a Comentarios Públicos y Seguir Explorando -->
+            <div class="mt-5 space-y-2.5">
+                <button onclick="goToPublicCommentsFromModal()" class="w-full inline-flex items-center justify-center gap-2 bg-[#FDE293] hover:bg-[#fbd76d] text-[#342E68] border-2 border-[#6366B8] font-display font-extrabold py-3.5 px-5 rounded-2xl text-sm transition-all shadow-sm active:scale-[0.98]">
+                    <i data-lucide="message-square-heart" class="w-4 h-4"></i>
+                    <span>Ir a Comentarios Públicos</span>
+                </button>
+                <button onclick="closeOrderModal()" class="w-full bg-zinc-950 hover:bg-zinc-800 text-white font-bold py-3 rounded-2xl text-xs sm:text-sm transition-colors">
+                    Seguir Explorando
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL DE CONFIRMACIÓN DE PEDIDO EXITOSO
+    ====================================================================== -->
+    <div id="order-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-950/70 backdrop-blur-xs">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-zinc-200 animate-[fadeIn_0.25s_ease-out]">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check" class="w-8 h-8 stroke-[3]"></i>
+            </div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-600">Orden Confirmada</span>
+            <h3 class="font-display font-black text-2xl text-zinc-950 mt-1">¡Gracias por tu pedido!</h3>
+            <p class="text-sm text-zinc-600 mt-2">
+                Hemos registrado tu solicitud bajo el código <strong id="order-code-display" class="text-zinc-950">#INK-8492</strong>. Nuestro equipo de producción revisará los archivos y preparará tu orden.
+            </p>
+            <div class="mt-6 bg-zinc-50 rounded-2xl p-4 border border-zinc-200 text-left text-xs space-y-1.5 text-zinc-600">
+                <div class="flex justify-between">
+                    <span>Estado:</span>
+                    <span class="font-bold text-zinc-950">En cola de pre-prensa</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Tiempo estimado:</span>
+                    <span class="font-bold text-zinc-950">24 - 48 horas hábiles</span>
+                </div>
+            </div>
+            <button onclick="closeOrderModal()" class="mt-6 w-full bg-zinc-950 hover:bg-rose-600 text-white font-bold py-3.5 rounded-xl text-sm transition-colors">
+                Seguir Explorando
+            </button>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         JAVASCRIPT PRINCIPAL (ESTADO, CONFIGURADOR, CATÁLOGOS Y CARRITO)
+    ====================================================================== -->
+    <script>
+        // Número de WhatsApp centralizado y configurable de la tienda (formato internacional limpio para wa.me)
+        const DEFAULT_WHATSAPP_NUMBER = "584247564333";
+        const storedWa = localStorage.getItem('inkcraft_wa_number');
+        let WHATSAPP_NUMBER = (storedWa && storedWa !== "584120000000") ? storedWa : DEFAULT_WHATSAPP_NUMBER;
+        if (storedWa === "584120000000") {
+            localStorage.setItem('inkcraft_wa_number', DEFAULT_WHATSAPP_NUMBER);
+        }
+
+        // Formatear número para visualización elegante en UI (ej: +58 424-7564333)
+        function formatWhatsappDisplay(num) {
+            if (num === "584247564333") return "+58 424-7564333";
+            if (num.startsWith("58") && num.length === 12) {
+                return `+58 ${num.slice(2, 5)}-${num.slice(5)}`;
+            }
+            return `+${num}`;
+        }
+
+        // Paleta de colores de camisetas disponibles
+        const GARMENT_COLORS = [
+            { id: 'white', name: 'Blanco Óptico', hex: '#FFFFFF', rib: '#F4F4F5', isLight: true },
+            { id: 'black', name: 'Negro Azabache', hex: '#18181B', rib: '#27272A', isLight: false },
+            { id: 'heather-gray', name: 'Gris Jaspe', hex: '#D4D4D8', rib: '#A1A1AA', isLight: true },
+            { id: 'navy', name: 'Azul Marino', hex: '#1E3A8A', rib: '#172554', isLight: false },
+            { id: 'crimson', name: 'Rojo Carmesí', hex: '#BE123C', rib: '#9F1239', isLight: false },
+            { id: 'forest', name: 'Verde Bosque', hex: '#14532D', rib: '#052E16', isLight: false },
+            { id: 'sand', name: 'Arena / Beige', hex: '#E7E5E4', rib: '#D6D3D1', isLight: true }
+        ];
+
+        const GARMENT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
+        // Estado global del Configurador Interactivo DTF & Sublimación
+        const studioState = {
+            technique: 'DTF', // 'DTF' | 'Sublimación'
+            color: GARMENT_COLORS[0],
+            size: 'M',
+            quantity: 1,
+            activeSide: 'front', // 'front' | 'back'
+            cleanPreview: false,
+            sides: {
+                front: {
+                    imageSrc: null,
+                    fileName: '',
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    rotation: 0
+                },
+                back: {
+                    imageSrc: null,
+                    fileName: '',
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    rotation: 0
+                }
+            }
+        };
+
+        // Catálogo Independiente de Ropa (con ilustraciones SVG vectoriales nítidas)
+        const APPAREL_CATALOG = [
+            {
+                id: 'app-1',
+                name: 'Camiseta Boxy Heavyweight 260g',
+                category: 'Camisetas',
+                price: 22.00,
+                desc: '100% algodón peinado de alto gramaje, cuello acanalado ancho y caída oversized urbana.',
+                badge: 'Top Ventas',
+                colorHex: '#18181B',
+                accentHex: '#E11D48',
+                svgType: 'tee'
+            },
+            {
+                id: 'app-2',
+                name: 'Camiseta Essential Blank 210g',
+                category: 'Camisetas',
+                price: 16.50,
+                desc: 'Corte regular clásico, pre-encogida y suavizada enzimáticamente. Ideal para uso diario.',
+                badge: 'Básico',
+                colorHex: '#F4F4F5',
+                accentHex: '#18181B',
+                svgType: 'tee'
+            },
+            {
+                id: 'app-3',
+                name: 'Hoodie Street Fleece 420g',
+                category: 'Sudaderas',
+                price: 44.00,
+                desc: 'Sudadera con capucha doble forro, bolsillo canguro reforzado y puños elásticos de alta densidad.',
+                badge: 'Invierno',
+                colorHex: '#27272A',
+                accentHex: '#84CC16',
+                svgType: 'hoodie'
+            },
+            {
+                id: 'app-4',
+                name: 'Crewneck Vintage Washed',
+                category: 'Sudaderas',
+                price: 38.00,
+                desc: 'Sudadera sin capucha con lavado ácido mineral, costuras expuestas y tacto ultra suave.',
+                badge: 'Edición Limitada',
+                colorHex: '#57534E',
+                accentHex: '#F59E0B',
+                svgType: 'hoodie'
+            },
+            {
+                id: 'app-5',
+                name: 'Gorra Trucker 5 Paneles',
+                category: 'Gorras',
+                price: 15.00,
+                desc: 'Frente estructurado en espuma de alta densidad, malla trasera transpirable y cierre snapback.',
+                badge: 'Lista para DTF',
+                colorHex: '#09090B',
+                accentHex: '#E11D48',
+                svgType: 'cap'
+            },
+            {
+                id: 'app-6',
+                name: 'Dad Hat Algodón Cepillado',
+                category: 'Gorras',
+                price: 17.50,
+                desc: 'Visera curva clásica de 6 paneles, hebilla metálica ajustable y acabado lavado vintage.',
+                badge: 'Nuevo',
+                colorHex: '#D6D3D1',
+                accentHex: '#1E3A8A',
+                svgType: 'cap'
+            }
+        ];
+
+        // Catálogo Independiente de Accesorios
+        const ACCESSORIES_CATALOG = [
+            {
+                id: 'acc-1',
+                name: 'Taza Cerámica AAA 11oz',
+                price: 9.50,
+                desc: 'Cerámica blanca brillante con recubrimiento polimérico de alta definición para sublimación.',
+                tag: 'Sublimable',
+                svgType: 'mug'
+            },
+            {
+                id: 'acc-2',
+                name: 'Tote Bag Lona Cruda 12oz',
+                price: 12.00,
+                desc: 'Bolso ecológico de algodón resistente (38x42 cm) con asas reforzadas de 60 cm.',
+                tag: 'Eco-Friendly',
+                svgType: 'tote'
+            },
+            {
+                id: 'acc-3',
+                name: 'Termo Térmico Acero 20oz',
+                price: 21.00,
+                desc: 'Doble pared aislada al vacío, conserva bebidas frías 24h y calientes 12h. Tapa antiderrame.',
+                tag: 'Acero Inox',
+                svgType: 'tumbler'
+            },
+            {
+                id: 'acc-4',
+                name: 'Pack 3 Llaveros Acrílicos HD',
+                price: 8.00,
+                desc: 'Corte láser a medida en acrílico cristal de 4mm con argolla metálica giratoria reforzada.',
+                tag: 'Pack x3',
+                svgType: 'keychain'
+            },
+            {
+                id: 'acc-5',
+                name: 'Set 4 Pines Esmaltados Urban',
+                price: 11.00,
+                desc: 'Pines metálicos con esmalte duro brillante y broche de goma de alta sujeción para mochilas.',
+                tag: 'Colección',
+                svgType: 'pins'
+            },
+            {
+                id: 'acc-6',
+                name: 'Gorra Bucket Hat Reversible',
+                price: 18.50,
+                desc: 'Sombrero pescador en gabardina de algodón resistente, doble vista y costuras reforzadas.',
+                tag: 'Streetwear',
+                svgType: 'bucket'
+            }
+        ];
+
+        // Estado del Carrito de Compras
+        let cart = [];
+
+        // Estado de Comentarios Públicos (con precarga inicial realista y persistencia)
+        const DEFAULT_PUBLIC_COMMENTS = [
+            {
+                id: 'cmt-1',
+                author: 'Andrea Morales',
+                type: 'Experiencia positiva',
+                rating: 5,
+                text: 'Pedí dos camisetas personalizadas en DTF para un evento y los colores quedaron súper nítidos. El configurador me ayudó muchísimo a ver el tamaño exacto antes de escribir al WhatsApp.',
+                date: 'Hace 2 días'
+            },
+            {
+                id: 'cmt-2',
+                author: 'Luis Fernando G.',
+                type: 'Experiencia positiva',
+                rating: 5,
+                text: 'La calidad de la tela heavyweight y la atención por WhatsApp son de 10. Muy pacientes con los ajustes de mi logo antes de estampar.',
+                date: 'Hace 5 días'
+            },
+            {
+                id: 'cmt-3',
+                author: 'Camila R.',
+                type: 'Cosa que mejorar',
+                rating: 4,
+                text: 'Me encantaría que agregaran también mockups de hoodies y gorras dentro del configurador interactivo para probar diseños ahí mismo. ¡Por lo demás todo genial!',
+                date: 'Hace 1 semana'
+            }
+        ];
+
+        let publicComments = JSON.parse(localStorage.getItem('pigmentos_public_comments') || 'null') || DEFAULT_PUBLIC_COMMENTS;
+        let selectedCommentType = 'Experiencia positiva';
+        let selectedCommentRating = 5;
+        let activeCommentFilter = 'Todos';
+
+        // =====================================================================
+        // INICIALIZACIÓN DE LA APLICACIÓN
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            syncWhatsappNumberDisplays();
+            renderColorSwatches();
+            renderSizeButtons();
+            updateStudioPricing();
+            setupDragAndDropArtwork();
+            renderApparelCatalog('Todos');
+            renderAccessoriesCatalog();
+            renderPublicComments();
+        });
+
+        // Sincronizar visualización del número de WhatsApp en UI y modal
+        function syncWhatsappNumberDisplays() {
+            const formatted = formatWhatsappDisplay(WHATSAPP_NUMBER);
+            const footerEl = document.getElementById('footer-wa-display');
+            const drawerEl = document.getElementById('drawer-wa-display');
+            if (footerEl) footerEl.textContent = formatted;
+            if (drawerEl) drawerEl.textContent = formatted;
+        }
+
+        function openWhatsappSettingsModal() {
+            document.getElementById('wa-number-input').value = WHATSAPP_NUMBER;
+            const modal = document.getElementById('wa-settings-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeWhatsappSettingsModal() {
+            const modal = document.getElementById('wa-settings-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveWhatsappNumber() {
+            const raw = document.getElementById('wa-number-input').value.trim();
+            let cleaned = raw.replace(/\D/g, ''); // Eliminar +, espacios o guiones
+            // Normalizar si el usuario escribe 580424... -> 58424...
+            if (cleaned.startsWith('580') && cleaned.length === 13) {
+                cleaned = '58' + cleaned.slice(3);
+            }
+            if (cleaned.length < 8) {
+                showToast('Ingresa un número válido con código de país (mínimo 8 dígitos).', 'warning');
+                return;
+            }
+            WHATSAPP_NUMBER = cleaned;
+            localStorage.setItem('inkcraft_wa_number', WHATSAPP_NUMBER);
+            syncWhatsappNumberDisplays();
+            closeWhatsappSettingsModal();
+            showToast(`Número de WhatsApp actualizado a ${formatWhatsappDisplay(WHATSAPP_NUMBER)}.`, 'success');
+        }
+
+        function resetWhatsappNumber() {
+            WHATSAPP_NUMBER = DEFAULT_WHATSAPP_NUMBER;
+            localStorage.removeItem('inkcraft_wa_number');
+            document.getElementById('wa-number-input').value = WHATSAPP_NUMBER;
+            syncWhatsappNumberDisplays();
+            showToast('Número restaurado a +58 424-7564333.', 'info');
+        }
+
+        // =====================================================================
+        // 1. NAVEGACIÓN ENTRE VISTAS INDEPENDIENTES
+        // =====================================================================
+        function switchView(viewName) {
+            const views = ['studio', 'apparel', 'accessories', 'comments'];
+            
+            views.forEach(v => {
+                const section = document.getElementById(`view-${v}`);
+                const deskBtn = document.getElementById(`nav-${v}`);
+                const mobBtn = document.getElementById(`mob-nav-${v}`);
+
+                if (v === viewName) {
+                    section.classList.remove('hidden');
+                    // Estilo activo Desktop
+                    deskBtn.className = 'nav-tab px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 bg-zinc-950 text-white shadow-sm';
+                    // Estilo activo Mobile
+                    mobBtn.className = 'mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-bold bg-zinc-950 text-white text-center shadow-sm';
+                } else {
+                    section.classList.add('hidden');
+                    // Estilo inactivo Desktop
+                    deskBtn.className = 'nav-tab px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-2';
+                    // Estilo inactivo Mobile
+                    mobBtn.className = 'mob-nav-tab flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 text-center';
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // =====================================================================
+        // 2. LÓGICA DEL CONFIGURADOR INTERACTIVO DTF & SUBLIMACIÓN
+        // =====================================================================
+        function renderColorSwatches() {
+            const container = document.getElementById('color-swatches-container');
+            container.innerHTML = GARMENT_COLORS.map(c => {
+                const isSelected = studioState.color.id === c.id;
+                const isDisabledForSub = studioState.technique === 'Sublimación' && !c.isLight;
+                
+                return `
+                    <button 
+                        onclick="selectGarmentColor('${c.id}')"
+                        title="${c.name}${isDisabledForSub ? ' (No recomendado para sublimación)' : ''}"
+                        class="relative w-9 h-9 rounded-full transition-all flex items-center justify-center border-2 ${isSelected ? 'border-rose-600 scale-110 ring-2 ring-rose-600/20' : 'border-zinc-300 hover:scale-105'} ${isDisabledForSub ? 'opacity-35' : ''}"
+                        style="background-color: ${c.hex};"
+                    >
+                        ${isSelected ? `<span class="w-2.5 h-2.5 rounded-full ${c.isLight ? 'bg-zinc-950' : 'bg-white'}"></span>` : ''}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectGarmentColor(colorId) {
+            const chosen = GARMENT_COLORS.find(c => c.id === colorId);
+            if (!chosen) return;
+
+            // Si está en sublimación y elige un color oscuro, mostrar advertencia y sugerir cambio
+            if (studioState.technique === 'Sublimación' && !chosen.isLight) {
+                showToast('La sublimación solo se adhiere en tonos claros. Cambiando a técnica DTF automáticamente.', 'warning');
+                selectTechnique('DTF');
+            }
+
+            studioState.color = chosen;
+            
+            // Actualizar SVG de camiseta
+            document.getElementById('tshirt-base-color').setAttribute('fill', chosen.hex);
+            document.getElementById('collar-rib-front').setAttribute('fill', chosen.rib);
+            document.getElementById('collar-rib-back').setAttribute('fill', chosen.rib);
+
+            // Actualizar textos de UI
+            document.getElementById('selected-color-name').textContent = chosen.name;
+            document.getElementById('canvas-color-pill').textContent = `Color: ${chosen.name}`;
+
+            renderColorSwatches();
+        }
+
+        function selectTechnique(tech) {
+            studioState.technique = tech;
+            
+            const btnDtf = document.getElementById('tech-btn-dtf');
+            const btnSub = document.getElementById('tech-btn-sublimation');
+            const notice = document.getElementById('sublimation-notice');
+            const pill = document.getElementById('canvas-tech-pill');
+
+            if (tech === 'DTF') {
+                btnDtf.className = 'tech-option p-3.5 rounded-2xl border-2 border-zinc-950 bg-zinc-950 text-white text-left transition-all shadow-sm';
+                btnDtf.querySelector('.tech-check').setAttribute('data-lucide', 'check-circle-2');
+                btnDtf.querySelector('.tech-check').classList.replace('text-zinc-300', 'text-[#FDE293]');
+
+                btnSub.className = 'tech-option p-3.5 rounded-2xl border-2 border-zinc-200 bg-white hover:border-zinc-300 text-zinc-900 text-left transition-all';
+                btnSub.querySelector('.tech-check').setAttribute('data-lucide', 'circle');
+                btnSub.querySelector('.tech-check').classList.replace('text-[#FDE293]', 'text-zinc-300');
+
+                notice.classList.add('hidden');
+                pill.textContent = 'DTF FULL COLOR';
+            } else {
+                btnSub.className = 'tech-option p-3.5 rounded-2xl border-2 border-zinc-950 bg-zinc-950 text-white text-left transition-all shadow-sm';
+                btnSub.querySelector('.tech-check').setAttribute('data-lucide', 'check-circle-2');
+                btnSub.querySelector('.tech-check').classList.replace('text-zinc-300', 'text-[#FDE293]');
+
+                btnDtf.className = 'tech-option p-3.5 rounded-2xl border-2 border-zinc-200 bg-white hover:border-zinc-300 text-zinc-900 text-left transition-all';
+                btnDtf.querySelector('.tech-check').setAttribute('data-lucide', 'circle');
+                btnDtf.querySelector('.tech-check').classList.replace('text-[#FDE293]', 'text-zinc-300');
+
+                notice.classList.remove('hidden');
+                pill.textContent = 'SUBLIMACIÓN HD';
+
+                // Si el color actual es oscuro, cambiar automáticamente a Blanco Óptico
+                if (!studioState.color.isLight) {
+                    selectGarmentColor('white');
+                    showToast('Prenda ajustada a Blanco Óptico para Sublimación.', 'info');
+                }
+            }
+
+            lucide.createIcons();
+            renderColorSwatches();
+            updateStudioPricing();
+        }
+
+        function renderSizeButtons() {
+            const container = document.getElementById('size-buttons-container');
+            container.innerHTML = GARMENT_SIZES.map(sz => {
+                const isSelected = studioState.size === sz;
+                return `
+                    <button 
+                        onclick="selectGarmentSize('${sz}')"
+                        class="py-2.5 rounded-xl text-xs font-extrabold transition-all border ${isSelected ? 'bg-zinc-950 text-white border-zinc-950 shadow-sm' : 'bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400'}"
+                    >
+                        ${sz}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectGarmentSize(size) {
+            studioState.size = size;
+            renderSizeButtons();
+            updateStudioPricing();
+        }
+
+        function changeStudioQty(delta) {
+            const next = studioState.quantity + delta;
+            if (next >= 1 && next <= 500) {
+                studioState.quantity = next;
+                document.getElementById('studio-qty-display').textContent = next;
+                updateStudioPricing();
+            }
+        }
+
+        // Alternar Vista Frontal / Trasera manteniendo diseños separados
+        function switchGarmentSide(side) {
+            studioState.activeSide = side;
+
+            const btnFront = document.getElementById('side-btn-front');
+            const btnBack = document.getElementById('side-btn-back');
+            const collarFront = document.getElementById('tshirt-collar-front');
+            const collarBack = document.getElementById('tshirt-collar-back');
+
+            if (side === 'front') {
+                btnFront.className = 'px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-zinc-950 shadow-sm transition-all flex items-center gap-1.5';
+                btnBack.className = 'px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-1.5';
+                collarFront.classList.remove('hidden');
+                collarBack.classList.add('hidden');
+            } else {
+                btnBack.className = 'px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-zinc-950 shadow-sm transition-all flex items-center gap-1.5';
+                btnFront.className = 'px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-950 transition-all flex items-center gap-1.5';
+                collarBack.classList.remove('hidden');
+                collarFront.classList.add('hidden');
+            }
+
+            syncArtworkCanvasToCurrentSide();
+        }
+
+        // Subida de imagen desde input file
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            processUploadedFile(file);
+            event.target.value = ''; // Permitir subir el mismo archivo de nuevo
+        }
+
+        function processUploadedFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Por favor selecciona un archivo de imagen válido (PNG, JPG, SVG).', 'warning');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const sideData = studioState.sides[studioState.activeSide];
+                sideData.imageSrc = e.target.result;
+                sideData.fileName = file.name;
+                sideData.x = 0;
+                sideData.y = 0;
+                sideData.scale = 1;
+                sideData.rotation = 0;
+
+                syncArtworkCanvasToCurrentSide();
+                updateSideIndicators();
+                updateStudioPricing();
+                showToast(`Imagen cargada en vista ${studioState.activeSide === 'front' ? 'frontal' : 'trasera'}.`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function syncArtworkCanvasToCurrentSide() {
+            const sideData = studioState.sides[studioState.activeSide];
+            const placeholder = document.getElementById('upload-placeholder');
+            const imgEl = document.getElementById('uploaded-art-img');
+            const sliders = document.getElementById('transform-sliders');
+            const btnRemove = document.getElementById('btn-remove-art');
+            const uploadBtnText = document.getElementById('upload-btn-text');
+
+            if (sideData.imageSrc) {
+                placeholder.classList.add('hidden');
+                imgEl.src = sideData.imageSrc;
+                imgEl.classList.remove('hidden');
+
+                // Aplicar transformaciones guardadas
+                document.getElementById('art-scale-slider').value = Math.round(sideData.scale * 100);
+                document.getElementById('art-rotate-slider').value = sideData.rotation;
+                document.getElementById('scale-value-label').textContent = `${Math.round(sideData.scale * 100)}%`;
+                document.getElementById('rotate-value-label').textContent = `${sideData.rotation}°`;
+                applyCssTransform();
+
+                sliders.classList.remove('opacity-40', 'pointer-events-none');
+                btnRemove.classList.remove('hidden');
+                uploadBtnText.textContent = 'Cambiar Imagen';
+            } else {
+                placeholder.classList.remove('hidden');
+                imgEl.classList.add('hidden');
+                imgEl.src = '';
+
+                sliders.classList.add('opacity-40', 'pointer-events-none');
+                btnRemove.classList.add('hidden');
+                uploadBtnText.textContent = 'Subir Imagen (PNG/SVG)';
+            }
+        }
+
+        function updateArtTransform() {
+            const sideData = studioState.sides[studioState.activeSide];
+            if (!sideData.imageSrc) return;
+
+            const scalePct = parseInt(document.getElementById('art-scale-slider').value, 10);
+            const rotDeg = parseInt(document.getElementById('art-rotate-slider').value, 10);
+
+            sideData.scale = scalePct / 100;
+            sideData.rotation = rotDeg;
+
+            document.getElementById('scale-value-label').textContent = `${scalePct}%`;
+            document.getElementById('rotate-value-label').textContent = `${rotDeg}°`;
+
+            applyCssTransform();
+        }
+
+        function applyCssTransform() {
+            const sideData = studioState.sides[studioState.activeSide];
+            const imgEl = document.getElementById('uploaded-art-img');
+            imgEl.style.transform = `translate(${sideData.x}px, ${sideData.y}px) scale(${sideData.scale}) rotate(${sideData.rotation}deg)`;
+        }
+
+        function centerArtPosition() {
+            const sideData = studioState.sides[studioState.activeSide];
+            if (!sideData.imageSrc) return;
+            sideData.x = 0;
+            sideData.y = 0;
+            applyCssTransform();
+        }
+
+        function removeCurrentArt() {
+            const sideData = studioState.sides[studioState.activeSide];
+            sideData.imageSrc = null;
+            sideData.fileName = '';
+            sideData.x = 0;
+            sideData.y = 0;
+            sideData.scale = 1;
+            sideData.rotation = 0;
+
+            syncArtworkCanvasToCurrentSide();
+            updateSideIndicators();
+            updateStudioPricing();
+        }
+
+        function resetCurrentSide() {
+            removeCurrentArt();
+            showToast('Lienzo reiniciado.', 'info');
+        }
+
+        function toggleCleanPreview() {
+            studioState.cleanPreview = !studioState.cleanPreview;
+            const zone = document.getElementById('print-area-box');
+            const label = document.getElementById('clean-preview-label');
+
+            if (studioState.cleanPreview) {
+                zone.classList.add('clean-preview');
+                label.textContent = 'Mostrar Guías';
+            } else {
+                zone.classList.remove('clean-preview');
+                label.textContent = 'Ocultar Guías';
+            }
+        }
+
+        function updateSideIndicators() {
+            const frontDot = document.getElementById('badge-front-active');
+            const backDot = document.getElementById('badge-back-active');
+
+            frontDot.classList.toggle('hidden', !studioState.sides.front.imageSrc);
+            backDot.classList.toggle('hidden', !studioState.sides.back.imageSrc);
+        }
+
+        // Configurar arrastre (Mouse + Touch) de la imagen y Dropzone de archivos
+        function setupDragAndDropArtwork() {
+            const imgEl = document.getElementById('uploaded-art-img');
+            const dropzone = document.getElementById('mockup-dropzone');
+
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+
+            const onPointerDown = (e) => {
+                const sideData = studioState.sides[studioState.activeSide];
+                if (!sideData.imageSrc) return;
+                isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                startX = clientX - sideData.x;
+                startY = clientY - sideData.y;
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const sideData = studioState.sides[studioState.activeSide];
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                // Limitar desplazamiento dentro de un rango razonable del área de impresión
+                const rawX = clientX - startX;
+                const rawY = clientY - startY;
+                sideData.x = Math.max(-95, Math.min(95, rawX));
+                sideData.y = Math.max(-110, Math.min(110, rawY));
+
+                applyCssTransform();
+            };
+
+            const onPointerUp = () => {
+                isDragging = false;
+            };
+
+            imgEl.addEventListener('mousedown', onPointerDown);
+            window.addEventListener('mousemove', onPointerMove);
+            window.addEventListener('mouseup', onPointerUp);
+
+            imgEl.addEventListener('touchstart', onPointerDown, { passive: false });
+            window.addEventListener('touchmove', onPointerMove, { passive: false });
+            window.addEventListener('touchend', onPointerUp);
+
+            // Drag & Drop de archivos desde el escritorio al lienzo
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('ring-2', 'ring-rose-500');
+            });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('ring-2', 'ring-rose-500');
+            });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('ring-2', 'ring-rose-500');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    processUploadedFile(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        // Cálculo dinámico de precios del configurador
+        function calculateStudioUnitPrice() {
+            const baseGarmentPrice = studioState.technique === 'DTF' ? 18.00 : 16.00;
+            const hasFront = Boolean(studioState.sides.front.imageSrc);
+            const hasBack = Boolean(studioState.sides.back.imageSrc);
+
+            // Si tiene ambos lados estampados, suma un adicional de $6.00
+            let extraPrintCost = 0;
+            if (hasFront && hasBack) {
+                extraPrintCost = 6.00;
+            }
+
+            const sizeSurcharge = (studioState.size === 'XXL' || studioState.size === 'XXXL') ? 3.00 : 0.00;
+
+            return {
+                baseGarmentPrice,
+                extraPrintCost,
+                sizeSurcharge,
+                unitTotal: baseGarmentPrice + extraPrintCost + sizeSurcharge,
+                hasFront,
+                hasBack
+            };
+        }
+
+        function updateStudioPricing() {
+            const pricing = calculateStudioUnitPrice();
+            const grandTotal = pricing.unitTotal * studioState.quantity;
+
+            document.getElementById('summary-tech-label').textContent = studioState.technique;
+            document.getElementById('summary-base-price').textContent = `$${pricing.baseGarmentPrice.toFixed(2)}`;
+
+            let sidesText = '1 cara incluida';
+            if (pricing.hasFront && pricing.hasBack) sidesText = 'Frente + Espalda';
+            else if (pricing.hasBack) sidesText = 'Solo Espalda';
+            else if (pricing.hasFront) sidesText = 'Solo Frente';
+
+            document.getElementById('summary-sides-label').textContent = sidesText;
+            document.getElementById('summary-prints-price').textContent = pricing.extraPrintCost > 0 ? `+$${pricing.extraPrintCost.toFixed(2)}` : 'Incluido';
+
+            const sizeRow = document.getElementById('summary-size-row');
+            if (pricing.sizeSurcharge > 0) {
+                sizeRow.classList.remove('hidden');
+                document.getElementById('summary-size-tag').textContent = studioState.size;
+            } else {
+                sizeRow.classList.add('hidden');
+            }
+
+            document.getElementById('studio-total-price').textContent = `$${grandTotal.toFixed(2)}`;
+        }
+
+        // Agregar prenda personalizada al carrito
+        function addCustomGarmentToCart() {
+            const pricing = calculateStudioUnitPrice();
+            const hasFront = pricing.hasFront;
+            const hasBack = pricing.hasBack;
+
+            const frontDetails = hasFront
+                ? `Frontal: "${studioState.sides.front.fileName}" (Escala ${Math.round(studioState.sides.front.scale * 100)}%, Pos X:${Math.round(studioState.sides.front.x)} Y:${Math.round(studioState.sides.front.y)})`
+                : null;
+            const backDetails = hasBack
+                ? `Trasera: "${studioState.sides.back.fileName}" (Escala ${Math.round(studioState.sides.back.scale * 100)}%, Pos X:${Math.round(studioState.sides.back.x)} Y:${Math.round(studioState.sides.back.y)})`
+                : null;
+
+            let printSummary = 'Prenda Lisa (Sin estampado)';
+            if (frontDetails && backDetails) {
+                printSummary = `${frontDetails} | ${backDetails}`;
+            } else if (frontDetails) {
+                printSummary = frontDetails;
+            } else if (backDetails) {
+                printSummary = backDetails;
+            }
+
+            const customItem = {
+                uid: `custom-${Date.now()}`,
+                type: 'custom',
+                name: `Camiseta Personalizada (${studioState.technique})`,
+                price: pricing.unitTotal,
+                quantity: studioState.quantity,
+                meta: {
+                    technique: studioState.technique,
+                    colorName: studioState.color.name,
+                    colorHex: studioState.color.hex,
+                    size: studioState.size,
+                    printSummary: printSummary,
+                    thumbSrc: studioState.sides.front.imageSrc || studioState.sides.back.imageSrc || null
+                }
+            };
+
+            cart.push(customItem);
+            renderCart();
+            toggleCart(true);
+            showToast('Diseño personalizado agregado al carrito.', 'success');
+        }
+
+        // Cotizar / Pedir directamente por WhatsApp desde el Configurador DTF/Sublimación
+        function quoteCustomViaWhatsApp() {
+            const pricing = calculateStudioUnitPrice();
+            const unitFormatted = pricing.unitTotal.toFixed(2);
+            const totalFormatted = (pricing.unitTotal * studioState.quantity).toFixed(2);
+
+            const frontSide = studioState.sides.front;
+            const backSide = studioState.sides.back;
+
+            const frontLine = frontSide.imageSrc
+                ? `Sí — Archivo: "${frontSide.fileName}" (Escala: ${Math.round(frontSide.scale * 100)}%, Rotación: ${frontSide.rotation}°, Posición: X:${Math.round(frontSide.x)}px / Y:${Math.round(frontSide.y)}px)`
+                : 'No (Sin diseño frontal)';
+
+            const backLine = backSide.imageSrc
+                ? `Sí — Archivo: "${backSide.fileName}" (Escala: ${Math.round(backSide.scale * 100)}%, Rotación: ${backSide.rotation}°, Posición: X:${Math.round(backSide.x)}px / Y:${Math.round(backSide.y)}px)`
+                : 'No (Sin diseño trasero)';
+
+            const techLabel = studioState.technique === 'DTF' ? 'DTF Premium Full Color' : 'Sublimación HD';
+
+            const msg = [
+                `🎨 *NUEVA ORDEN PERSONALIZADA — PIGMENTOS*`,
+                `_"La vida es demasiada corta para no ser creativos"_`,
+                ``,
+                `👕 *Producto base:* Camiseta Personalizada`,
+                `✨ *Técnica:* ${techLabel}`,
+                `🌈 *Color de prenda:* ${studioState.color.name}`,
+                `📏 *Talla:* ${studioState.size}`,
+                `📦 *Cantidad:* ${studioState.quantity} unid.`,
+                ``,
+                `🖼️ *DETALLE DE ESTAMPADOS:*`,
+                `• *Vista Frontal:* ${frontLine}`,
+                `• *Vista Trasera:* ${backLine}`,
+                ``,
+                `💵 *Precio unitario:* $${unitFormatted}`,
+                `💰 *TOTAL ESTIMADO:* $${totalFormatted}`,
+                ``,
+                `📎 _Envío mis archivos en alta resolución a continuación para iniciar producción._`
+            ].join('\n');
+
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank', 'noopener,noreferrer');
+            openThankYouModal('Cotización WhatsApp');
+        }
+
+        // =====================================================================
+        // 3. RENDERIZADO DE CATÁLOGO DE ROPA (INDEPENDIENTE)
+        // =====================================================================
+        function getProductSvgIllustration(type, mainColor = '#18181B', accentColor = '#E11D48') {
+            if (type === 'tee') {
+                return `
+                    <svg viewBox="0 0 240 240" class="w-40 h-40 drop-shadow-md transition-transform duration-300 group-hover:scale-105">
+                        <path fill="${mainColor}" stroke="#71717A" stroke-opacity="0.25" stroke-width="1.5"
+                            d="M84,32 C98,44 142,44 156,32 L182,40 L224,78 L200,106 L178,88 L178,214 L62,214 L62,88 L40,106 L16,78 L58,40 Z"/>
+                        <path d="M84,32 C98,52 142,52 156,32" fill="none" stroke="#71717A" stroke-opacity="0.4" stroke-width="3"/>
+                        <rect x="96" y="84" width="48" height="14" rx="3" fill="${accentColor}"/>
+                        <text x="120" y="94" text-anchor="middle" fill="#FFFFFF" font-family="Montserrat, sans-serif" font-weight="900" font-size="8" letter-spacing="1">INKCRAFT</text>
+                    </svg>
+                `;
+            }
+            if (type === 'hoodie') {
+                return `
+                    <svg viewBox="0 0 240 240" class="w-40 h-40 drop-shadow-md transition-transform duration-300 group-hover:scale-105">
+                        <path fill="${mainColor}" stroke="#71717A" stroke-opacity="0.3" stroke-width="1.5"
+                            d="M85,38 C85,18 155,18 155,38 L185,48 L222,115 L196,128 L176,86 L176,210 L64,210 L64,86 L44,128 L18,115 L55,48 Z"/>
+                        <path d="M88,42 C105,64 135,64 152,42" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="3"/>
+                        <line x1="110" y1="56" x2="110" y2="84" stroke="#E4E4E7" stroke-width="2.5" stroke-linecap="round"/>
+                        <line x1="130" y1="56" x2="130" y2="84" stroke="#E4E4E7" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M86,154 L154,154 L162,202 L78,202 Z" fill="#000000" fill-opacity="0.18"/>
+                        <circle cx="152" cy="88" r="8" fill="${accentColor}"/>
+                    </svg>
+                `;
+            }
+            if (type === 'cap') {
+                return `
+                    <svg viewBox="0 0 240 240" class="w-40 h-40 drop-shadow-md transition-transform duration-300 group-hover:scale-105">
+                        <path fill="${mainColor}" stroke="#71717A" stroke-opacity="0.3" stroke-width="1.5"
+                            d="M52,135 C52,78 188,78 188,135 Z"/>
+                        <path fill="${accentColor}" d="M44,135 C85,122 165,125 208,146 C175,158 95,156 44,135 Z"/>
+                        <circle cx="120" cy="89" r="4" fill="${accentColor}"/>
+                        <rect x="98" y="106" width="44" height="14" rx="2" fill="#FFFFFF" fill-opacity="0.9"/>
+                        <text x="120" y="116" text-anchor="middle" fill="#09090B" font-family="Montserrat, sans-serif" font-weight="900" font-size="8">LAB//01</text>
+                    </svg>
+                `;
+            }
+            return '';
+        }
+
+        function filterApparel(category) {
+            document.querySelectorAll('.apparel-filter-btn').forEach(btn => {
+                if (btn.dataset.cat === category) {
+                    btn.className = 'apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-zinc-950 text-white shadow-sm transition-all';
+                } else {
+                    btn.className = 'apparel-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 transition-all';
+                }
+            });
+            renderApparelCatalog(category);
+        }
+
+        function renderApparelCatalog(category) {
+            const grid = document.getElementById('apparel-grid');
+            const filtered = category === 'Todos' 
+                ? APPAREL_CATALOG 
+                : APPAREL_CATALOG.filter(item => item.category === category);
+
+            document.getElementById('apparel-count-label').textContent = `Mostrando ${filtered.length} producto${filtered.length === 1 ? '' : 's'}`;
+
+            grid.innerHTML = filtered.map(item => `
+                <article class="group bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col">
+                    <!-- Visual de Producto -->
+                    <div class="relative bg-zinc-100 h-56 flex items-center justify-center p-6 overflow-hidden">
+                        <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded-lg bg-white/95 text-zinc-950 text-[11px] font-extrabold uppercase tracking-wide shadow-2xs">
+                            ${item.badge}
+                        </span>
+                        <span class="absolute top-3.5 right-3.5 px-2.5 py-1 rounded-lg bg-zinc-950/80 text-white text-[10px] font-semibold">
+                            ${item.category}
+                        </span>
+                        ${getProductSvgIllustration(item.svgType, item.colorHex, item.accentHex)}
+                    </div>
+
+                    <!-- Información y Selector Rápido -->
+                    <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="font-display font-extrabold text-base text-zinc-950 leading-snug">
+                                    ${item.name}
+                                </h3>
+                                <span class="font-display font-black text-lg text-rose-600 shrink-0">
+                                    $${item.price.toFixed(2)}
+                                </span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1.5 leading-relaxed">
+                                ${item.desc}
+                            </p>
+                        </div>
+
+                        <div class="space-y-3 pt-2 border-t border-zinc-100">
+                            <!-- Selector rápido de talla en tarjeta -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold uppercase text-zinc-400">Talla:</span>
+                                <div class="flex items-center gap-1" id="size-group-${item.id}">
+                                    ${(item.category === 'Gorras' ? ['Única'] : ['S', 'M', 'L', 'XL']).map((sz, idx) => `
+                                        <button 
+                                            type="button"
+                                            onclick="selectCardSize('${item.id}', '${sz}', this)"
+                                            data-selected="${idx === 1 || item.category === 'Gorras' ? 'true' : 'false'}"
+                                            class="card-size-btn px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${idx === 1 || item.category === 'Gorras' ? 'bg-zinc-950 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}"
+                                        >
+                                            ${sz}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <button 
+                                onclick="addCatalogItemToCart('apparel', '${item.id}')"
+                                class="w-full inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-rose-600 text-white py-3 rounded-xl text-xs font-bold transition-colors active:scale-[0.99]"
+                            >
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>Agregar al Carrito</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function selectCardSize(itemId, size, btnEl) {
+            const parent = document.getElementById(`size-group-${itemId}`);
+            parent.querySelectorAll('.card-size-btn').forEach(b => {
+                b.dataset.selected = 'false';
+                b.className = 'card-size-btn px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-zinc-100 text-zinc-600 hover:bg-zinc-200';
+            });
+            btnEl.dataset.selected = 'true';
+            btnEl.className = 'card-size-btn px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-zinc-950 text-white';
+        }
+
+        // =====================================================================
+        // 4. RENDERIZADO DE CATÁLOGO DE ACCESORIOS (INDEPENDIENTE)
+        // =====================================================================
+        function getAccessorySvgIllustration(type) {
+            switch (type) {
+                case 'mug':
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <path d="M138,72 L158,72 C170,72 176,82 176,98 C176,114 170,124 158,124 L138,124" fill="none" stroke="#D4D4D8" stroke-width="12" stroke-linecap="round"/>
+                            <rect x="46" y="52" width="94" height="104" rx="10" fill="#FFFFFF" stroke="#E4E4E7" stroke-width="2"/>
+                            <rect x="64" y="84" width="58" height="36" rx="6" fill="#E11D48"/>
+                            <text x="93" y="106" text-anchor="middle" fill="#FFFFFF" font-family="Montserrat, sans-serif" font-weight="900" font-size="11">11 OZ</text>
+                        </svg>
+                    `;
+                case 'tote':
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <path d="M74,66 C74,26 126,26 126,66" fill="none" stroke="#A8A29E" stroke-width="7" stroke-linecap="round"/>
+                            <rect x="48" y="64" width="104" height="110" rx="6" fill="#E7E5E4" stroke="#D6D3D1" stroke-width="2"/>
+                            <circle cx="100" cy="118" r="24" fill="#18181B"/>
+                            <text x="100" y="122" text-anchor="middle" fill="#84CC16" font-family="Montserrat, sans-serif" font-weight="900" font-size="10">RAW</text>
+                        </svg>
+                    `;
+                case 'tumbler':
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <rect x="70" y="34" width="60" height="14" rx="4" fill="#27272A"/>
+                            <path d="M68,48 L132,48 L124,168 C124,173 119,176 114,176 L86,176 C81,176 76,173 76,168 Z" fill="#18181B"/>
+                            <rect x="74" y="86" width="52" height="44" fill="#E11D48" fill-opacity="0.9"/>
+                            <text x="100" y="112" text-anchor="middle" fill="#FFFFFF" font-family="Montserrat, sans-serif" font-weight="900" font-size="10">THERMO</text>
+                        </svg>
+                    `;
+                case 'keychain':
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <circle cx="100" cy="48" r="14" fill="none" stroke="#71717A" stroke-width="4"/>
+                            <line x1="100" y1="62" x2="100" y2="78" stroke="#71717A" stroke-width="4"/>
+                            <rect x="64" y="78" width="72" height="84" rx="16" fill="#FFFFFF" stroke="#E11D48" stroke-width="3"/>
+                            <polygon points="100,94 118,128 82,128" fill="#09090B"/>
+                            <text x="100" y="148" text-anchor="middle" fill="#E11D48" font-family="Montserrat, sans-serif" font-weight="900" font-size="9">ACRYLIC</text>
+                        </svg>
+                    `;
+                case 'pins':
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <circle cx="72" cy="76" r="26" fill="#09090B" stroke="#FACC15" stroke-width="3"/>
+                            <text x="72" y="80" text-anchor="middle" fill="#FACC15" font-family="Montserrat, sans-serif" font-weight="900" font-size="11">INK</text>
+                            <rect x="106" y="54" width="48" height="44" rx="10" fill="#E11D48" stroke="#FFFFFF" stroke-width="3"/>
+                            <text x="130" y="80" text-anchor="middle" fill="#FFFFFF" font-family="Montserrat, sans-serif" font-weight="900" font-size="11">LAB</text>
+                            <circle cx="102" cy="134" r="28" fill="#84CC16" stroke="#09090B" stroke-width="3"/>
+                            <text x="102" y="138" text-anchor="middle" fill="#09090B" font-family="Montserrat, sans-serif" font-weight="900" font-size="11">DTF</text>
+                        </svg>
+                    `;
+                default:
+                    return `
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md group-hover:scale-105 transition-transform">
+                            <path d="M62,116 L66,68 C68,56 132,56 134,68 L138,116 Z" fill="#27272A"/>
+                            <path d="M40,136 L62,116 L138,116 L160,136 C130,148 70,148 40,136 Z" fill="#18181B"/>
+                            <rect x="82" y="84" width="36" height="14" rx="2" fill="#E11D48"/>
+                        </svg>
+                    `;
+            }
+        }
+
+        function renderAccessoriesCatalog() {
+            const grid = document.getElementById('accessories-grid');
+            grid.innerHTML = ACCESSORIES_CATALOG.map(acc => `
+                <article class="group bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col">
+                    <div class="relative bg-zinc-100 h-52 flex items-center justify-center p-6">
+                        <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded-lg bg-zinc-950 text-white text-[10px] font-extrabold uppercase tracking-wider">
+                            ${acc.tag}
+                        </span>
+                        ${getAccessorySvgIllustration(acc.svgType)}
+                    </div>
+
+                    <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="font-display font-extrabold text-base text-zinc-950">
+                                    ${acc.name}
+                                </h3>
+                                <span class="font-display font-black text-lg text-rose-600 shrink-0">
+                                    $${acc.price.toFixed(2)}
+                                </span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1.5 leading-relaxed">
+                                ${acc.desc}
+                            </p>
+                        </div>
+
+                        <button 
+                            onclick="addCatalogItemToCart('accessory', '${acc.id}')"
+                            class="w-full inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-rose-600 text-white py-3 rounded-xl text-xs font-bold transition-colors active:scale-[0.99]"
+                        >
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                            <span>Agregar al Carrito</span>
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Agregar ítem desde Catálogo de Ropa o Accesorios al Carrito
+        function addCatalogItemToCart(source, itemId) {
+            if (source === 'apparel') {
+                const product = APPAREL_CATALOG.find(p => p.id === itemId);
+                if (!product) return;
+
+                // Leer talla seleccionada en la tarjeta
+                const sizeGroup = document.getElementById(`size-group-${itemId}`);
+                const selectedBtn = sizeGroup.querySelector('[data-selected="true"]');
+                const chosenSize = selectedBtn ? selectedBtn.textContent.trim() : 'M';
+
+                const existing = cart.find(c => c.type === 'apparel' && c.productId === itemId && c.meta.size === chosenSize);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({
+                        uid: `app-${itemId}-${chosenSize}`,
+                        type: 'apparel',
+                        productId: itemId,
+                        name: product.name,
+                        price: product.price,
+                        quantity: 1,
+                        meta: {
+                            category: product.category,
+                            size: chosenSize,
+                            colorHex: product.colorHex
+                        }
+                    });
+                }
+                showToast(`${product.name} (Talla ${chosenSize}) agregado.`, 'success');
+            } else {
+                const acc = ACCESSORIES_CATALOG.find(a => a.id === itemId);
+                if (!acc) return;
+
+                const existing = cart.find(c => c.type === 'accessory' && c.productId === itemId);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({
+                        uid: `acc-${itemId}`,
+                        type: 'accessory',
+                        productId: itemId,
+                        name: acc.name,
+                        price: acc.price,
+                        quantity: 1,
+                        meta: {
+                            tag: acc.tag
+                        }
+                    });
+                }
+                showToast(`${acc.name} agregado al carrito.`, 'success');
+            }
+
+            renderCart();
+        }
+
+        // =====================================================================
+        // 5. CARRITO DE COMPRAS LATERAL (DRAWER) Y CHECKOUT WHATSAPP
+        // =====================================================================
+        function toggleCart(open) {
+            const overlay = document.getElementById('cart-drawer-overlay');
+            const drawer = document.getElementById('cart-drawer');
+
+            if (open) {
+                overlay.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    drawer.classList.remove('translate-x-full');
+                });
+            } else {
+                drawer.classList.add('translate-x-full');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyState = document.getElementById('cart-empty-state');
+            const footer = document.getElementById('cart-footer');
+            const badge = document.getElementById('cart-badge');
+            const drawerPill = document.getElementById('drawer-count-pill');
+
+            const totalUnits = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.textContent = totalUnits;
+            drawerPill.textContent = totalUnits;
+
+            if (cart.length === 0) {
+                emptyState.classList.remove('hidden');
+                footer.classList.add('hidden');
+                // Limpiar tarjetas previas manteniendo emptyState
+                Array.from(container.children).forEach(child => {
+                    if (child.id !== 'cart-empty-state') child.remove();
+                });
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            footer.classList.remove('hidden');
+
+            // Renderizar lista de productos
+            const itemsHtml = cart.map((item, index) => {
+                let visualBadge = '';
+                let detailsHtml = '';
+
+                if (item.type === 'custom') {
+                    visualBadge = `
+                        <div class="w-14 h-14 rounded-2xl border border-zinc-200 flex items-center justify-center shrink-0 relative overflow-hidden" style="background-color: ${item.meta.colorHex};">
+                            ${item.meta.thumbSrc 
+                                ? `<img src="${item.meta.thumbSrc}" class="w-10 h-10 object-contain drop-shadow" alt="Miniatura diseño"/>` 
+                                : `<i data-lucide="shirt" class="w-6 h-6 ${item.meta.colorHex === '#FFFFFF' ? 'text-zinc-800' : 'text-white'}"></i>`
+                            }
+                            <span class="absolute bottom-0 inset-x-0 bg-rose-600 text-white text-[8px] font-black text-center uppercase py-0.5">
+                                ${item.meta.technique}
+                            </span>
+                        </div>
+                    `;
+                    detailsHtml = `
+                        <p class="text-[11px] text-zinc-600 font-medium mt-0.5">
+                            ${item.meta.colorName} • Talla <strong class="text-zinc-900">${item.meta.size}</strong>
+                        </p>
+                        <p class="text-[10px] text-rose-600 font-semibold mt-0.5 truncate max-w-[200px]" title="${item.meta.printSummary}">
+                            ${item.meta.printSummary}
+                        </p>
+                    `;
+                } else if (item.type === 'apparel') {
+                    visualBadge = `
+                        <div class="w-14 h-14 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="shirt" class="w-6 h-6 text-zinc-800"></i>
+                        </div>
+                    `;
+                    detailsHtml = `
+                        <p class="text-[11px] text-zinc-500 mt-0.5">
+                            ${item.meta.category} • Talla <strong class="text-zinc-900">${item.meta.size}</strong>
+                        </p>
+                    `;
+                } else {
+                    visualBadge = `
+                        <div class="w-14 h-14 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-rose-600"></i>
+                        </div>
+                    `;
+                    detailsHtml = `
+                        <p class="text-[11px] text-zinc-500 mt-0.5">
+                            Accesorio • ${item.meta.tag}
+                        </p>
+                    `;
+                }
+
+                return `
+                    <div class="bg-white rounded-2xl border border-zinc-200 p-3.5 flex items-center gap-3.5 shadow-2xs">
+                        ${visualBadge}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <h4 class="font-display font-bold text-xs sm:text-sm text-zinc-950 truncate">
+                                    ${item.name}
+                                </h4>
+                                <button onclick="removeCartItem(${index})" class="text-zinc-400 hover:text-red-600 transition-colors p-0.5" title="Eliminar">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            ${detailsHtml}
+                            <div class="flex items-center justify-between mt-2.5">
+                                <span class="font-display font-extrabold text-sm text-zinc-950">
+                                    $${(item.price * item.quantity).toFixed(2)}
+                                </span>
+                                <div class="flex items-center bg-zinc-100 rounded-lg p-0.5 border border-zinc-200">
+                                    <button onclick="updateCartItemQty(${index}, -1)" class="w-6 h-6 rounded-md hover:bg-white text-xs font-bold text-zinc-700">-</button>
+                                    <span class="w-7 text-center text-xs font-bold text-zinc-950">${item.quantity}</span>
+                                    <button onclick="updateCartItemQty(${index}, 1)" class="w-6 h-6 rounded-md hover:bg-white text-xs font-bold text-zinc-700">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Mantener emptyState oculto y reemplazar ítems
+            container.innerHTML = '';
+            container.appendChild(emptyState);
+            container.insertAdjacentHTML('beforeend', itemsHtml);
+
+            // Actualizar totales
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('cart-total').textContent = `$${subtotal.toFixed(2)}`;
+
+            lucide.createIcons();
+        }
+
+        function updateCartItemQty(index, delta) {
+            if (!cart[index]) return;
+            const newQty = cart[index].quantity + delta;
+            if (newQty <= 0) {
+                cart.splice(index, 1);
+            } else {
+                cart[index].quantity = newQty;
+            }
+            renderCart();
+        }
+
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function checkoutViaWhatsApp() {
+            if (cart.length === 0) return;
+
+            const customerInput = document.getElementById('customer-info-input');
+            const customerInfo = customerInput ? customerInput.value.trim() : '';
+
+            const lines = [
+                `🛍️ *NUEVO PEDIDO WEB — PIGMENTOS*`,
+                `_"La vida es demasiada corta para no ser creativos"_`,
+                `==================================`
+            ];
+
+            if (customerInfo) {
+                lines.push(`👤 *Cliente / Entrega:* ${customerInfo}`);
+                lines.push(`----------------------------------`);
+            }
+
+            cart.forEach((item, idx) => {
+                const itemSubtotal = (item.price * item.quantity).toFixed(2);
+                lines.push(`*${idx + 1}. ${item.name}*`);
+                lines.push(`   • Cantidad: ${item.quantity} unid. x $${item.price.toFixed(2)} = *$${itemSubtotal}*`);
+
+                if (item.type === 'custom') {
+                    lines.push(`   • Técnica: ${item.meta.technique} | Color: ${item.meta.colorName} | Talla: ${item.meta.size}`);
+                    lines.push(`   • Estampado: ${item.meta.printSummary}`);
+                } else if (item.type === 'apparel') {
+                    lines.push(`   • Categoría: ${item.meta.category} | Talla: ${item.meta.size}`);
+                } else if (item.type === 'accessory') {
+                    lines.push(`   • Tipo: Accesorio (${item.meta.tag})`);
+                }
+                lines.push(``);
+            });
+
+            const totalUnits = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+
+            lines.push(`==================================`);
+            lines.push(`📦 *Total artículos:* ${totalUnits} unid.`);
+            lines.push(`💰 *TOTAL GENERAL A PAGAR: $${grandTotal}*`);
+            lines.push(``);
+            lines.push(`✅ _Quedo atento a la confirmación de disponibilidad y datos de pago._`);
+
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`;
+            window.open(url, '_blank', 'noopener,noreferrer');
+            openThankYouModal('Pedido WhatsApp');
+        }
+
+        function openThankYouModal(actionLabel = 'Orden Confirmada') {
+            const randomCode = `#PIG-${Math.floor(1000 + Math.random() * 9000)}`;
+            document.getElementById('order-modal-badge').innerHTML = `${actionLabel} • <strong id="order-code-display">${randomCode}</strong>`;
+
+            const modal = document.getElementById('order-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function goToPublicCommentsFromModal() {
+            closeOrderModal();
+            switchView('comments');
+        }
+
+        function completeOrderModal() {
+            if (cart.length === 0) return;
+
+            toggleCart(false);
+            openThankYouModal('Compra Directa');
+
+            // Vaciar carrito tras compra exitosa
+            cart = [];
+            renderCart();
+        }
+
+        function closeOrderModal() {
+            const modal = document.getElementById('order-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // =====================================================================
+        // 6. SECCIÓN DE COMENTARIOS PÚBLICOS (FORMULARIO, FILTROS Y MURO)
+        // =====================================================================
+        function selectCommentType(type, btnEl) {
+            selectedCommentType = type;
+            document.querySelectorAll('.comment-type-pill').forEach(btn => {
+                btn.dataset.selected = 'false';
+                btn.className = 'comment-type-pill px-3 py-2 rounded-xl text-xs font-bold border-2 border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 transition-all text-center';
+            });
+            btnEl.dataset.selected = 'true';
+            btnEl.className = 'comment-type-pill px-3 py-2 rounded-xl text-xs font-bold border-2 border-[#6366B8] bg-[#6366B8] text-white transition-all text-center';
+        }
+
+        function setCommentRating(rating) {
+            selectedCommentRating = rating;
+            const labels = {
+                1: '1 / 5 Muy mala',
+                2: '2 / 5 Regular',
+                3: '3 / 5 Aceptable',
+                4: '4 / 5 Muy buena',
+                5: '5 / 5 Excelente'
+            };
+            document.getElementById('rating-text-label').textContent = labels[rating] || '5 / 5 Excelente';
+
+            document.querySelectorAll('#star-rating-selector .star-btn').forEach((btn, idx) => {
+                const icon = btn.querySelector('svg, i');
+                if (idx < rating) {
+                    btn.classList.remove('text-zinc-300');
+                    btn.classList.add('text-amber-400');
+                    if (icon) icon.classList.add('fill-amber-400');
+                } else {
+                    btn.classList.remove('text-amber-400');
+                    btn.classList.add('text-zinc-300');
+                    if (icon) icon.classList.remove('fill-amber-400');
+                }
+            });
+        }
+
+        function submitPublicComment(event) {
+            event.preventDefault();
+            const authorInput = document.getElementById('comment-author');
+            const bodyInput = document.getElementById('comment-body');
+
+            const text = bodyInput.value.trim();
+            if (!text) return;
+
+            const author = authorInput.value.trim() || 'Cliente Anónimo';
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const newComment = {
+                id: `cmt-${Date.now()}`,
+                author,
+                type: selectedCommentType,
+                rating: selectedCommentRating,
+                text,
+                date: `Hoy, ${formattedDate}`
+            };
+
+            publicComments.unshift(newComment);
+            localStorage.setItem('pigmentos_public_comments', JSON.stringify(publicComments));
+
+            bodyInput.value = '';
+            activeCommentFilter = 'Todos';
+            filterPublicComments('Todos');
+            showToast('¡Gracias! Tu comentario ya es visible en el muro público.', 'success');
+        }
+
+        function filterPublicComments(filterCategory) {
+            activeCommentFilter = filterCategory;
+            document.querySelectorAll('.comment-filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filterCategory) {
+                    btn.className = 'comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-zinc-950 text-white transition-all';
+                } else {
+                    btn.className = 'comment-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all';
+                }
+            });
+            renderPublicComments();
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderPublicComments() {
+            const listEl = document.getElementById('public-comments-list');
+            const countEl = document.getElementById('comments-showing-count');
+            const avgEl = document.getElementById('comments-avg-rating');
+            const totalBadgeEl = document.getElementById('comments-total-badge');
+
+            if (!listEl) return;
+
+            // Actualizar estadísticas globales
+            const avg = publicComments.length
+                ? (publicComments.reduce((acc, c) => acc + c.rating, 0) / publicComments.length).toFixed(1)
+                : '5.0';
+            if (avgEl) avgEl.textContent = avg;
+            if (totalBadgeEl) totalBadgeEl.textContent = `${publicComments.length} opiniones de la comunidad`;
+
+            const filtered = activeCommentFilter === 'Todos'
+                ? publicComments
+                : publicComments.filter(c => c.type === activeCommentFilter);
+
+            if (countEl) {
+                countEl.textContent = `Mostrando ${filtered.length} comentario${filtered.length === 1 ? '' : 's'}`;
+            }
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="bg-white rounded-3xl border border-zinc-200 p-8 text-center">
+                        <p class="font-display font-bold text-zinc-900 text-sm">Aún no hay comentarios en esta categoría</p>
+                        <p class="text-xs text-zinc-500 mt-1">Sé el primero en compartir tu opinión usando el formulario.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(c => {
+                const badgeStyles = {
+                    'Experiencia positiva': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    'Cosa que mejorar': 'bg-amber-50 text-amber-700 border-amber-200',
+                    'Queja / Reporte': 'bg-rose-50 text-rose-700 border-rose-200'
+                };
+                const badgeClass = badgeStyles[c.type] || 'bg-zinc-100 text-zinc-700 border-zinc-200';
+                const initials = c.author.slice(0, 2).toUpperCase();
+
+                const starsHtml = Array.from({ length: 5 }, (_, i) => `
+                    <i data-lucide="star" class="w-3.5 h-3.5 ${i < c.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-200'}"></i>
+                `).join('');
+
+                return `
+                    <article class="bg-white rounded-3xl border border-zinc-200 p-5 shadow-2xs transition-all hover:border-zinc-300">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-[#FDE293] text-[#342E68] font-display font-black text-xs flex items-center justify-center shrink-0 border border-[#6366B8]/25">
+                                    ${escapeHtml(initials)}
+                                </div>
+                                <div>
+                                    <h4 class="font-display font-extrabold text-sm text-zinc-950">${escapeHtml(c.author)}</h4>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <div class="flex items-center gap-0.5">${starsHtml}</div>
+                                        <span class="text-[11px] text-zinc-400">• ${escapeHtml(c.date)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg border text-[11px] font-bold shrink-0 ${badgeClass}">
+                                ${escapeHtml(c.type)}
+                            </span>
+                        </div>
+                        <p class="text-sm text-zinc-700 leading-relaxed mt-3.5">
+                            ${escapeHtml(c.text)}
+                        </p>
+                    </article>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // =====================================================================
+        // UTILIDAD: NOTIFICACIONES TOAST NO INTRUSIVAS
+        // =====================================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const colors = {
+                success: 'bg-zinc-950 text-white border-zinc-800',
+                warning: 'bg-amber-600 text-white border-amber-700',
+                info: 'bg-blue-600 text-white border-blue-700'
+            };
+
+            toast.className = `pointer-events-auto px-4 py-3 rounded-2xl border shadow-xl text-xs font-bold flex items-center gap-2.5 max-w-xs transition-all duration-300 ${colors[type] || colors.success}`;
+            toast.innerHTML = `
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+    </script>
+</body>
+</html>
